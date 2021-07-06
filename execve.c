@@ -15,7 +15,7 @@ void	execution(char *cmd)
 	DIR *dir;
 	int pid;
 	struct dirent *dp;
-	char *name = "ls";
+	char *name = "ls"; // this variable is the same "cmd" which should pass by function argument
 	char *newname = ft_strjoin("/", name);
 	char *argv[] = {name, NULL};
 
