@@ -5,8 +5,9 @@
 
 typedef	struct 	s_commmands
 {
-	int piped;
-
+	int 	piped;
+	char 	**parsed;
+	char 	**parsedpipe;
 }				t_commands;
 
 
