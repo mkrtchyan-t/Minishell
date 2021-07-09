@@ -1,9 +1,13 @@
 #include "libft/libft.h"
-#include "get_next_line/get_next_line.h"
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
-typedef	struct s_builtins
+typedef	struct 	s_commmands
 {
-	char 	*bins[];
-	int 	count;
+	int piped;
 
-}				t_builtins;
+}				t_commands;
+
+
+void	initcmds(t_commands *coms);

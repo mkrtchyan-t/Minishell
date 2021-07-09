@@ -1,24 +1,39 @@
 #include "minishell.h"
 
-t_builtins g_builtins;
-
-void 	initstruct(t_builtins *g_builtins)
+int 	takeinput(char **line)
 {
-	g_builtins->bins = {
+	char *buf;
 
-		"echo",
-		"cd",
-		"pwd",
-		"export",
-		"unset",
-		"env",
-		"exit",
-	};
-	g_builtins->count = 7;
-
+	(void)line;
+	buf = readline("\n$> ");
+	if (ft_strlen(buf) != 0)
+	{
+		add_history(buf);
+		*line = ft_strdup(buf);
+		return (0);
+	}
+	return (1);
 }
 
-int 	sh_execute(char **args)
+char 	**parsepipe(char *line)
+{
+	char **strpiped;
+
+	strpiped = ft_split(line, '|');
+	return(strpiped);
+}
+
+void 	processline(char *line, t_commands *coms)
+{
+	char **strpiped;
+
+	strpiped = NULL;
+	strpiped = parsepipe(line);
+	if (strpiped[1] != NULL)
+		coms->piped = 1;
+}
+
+/*int 	sh_execute(char **args)
 {
 	int i;
 
@@ -31,23 +46,19 @@ int 	sh_execute(char **args)
 			//
 
 	}
-}
+}*/
 
 int 	main()
 {
-	int 	status;
-	char 	*line;
-	char 	**args;
+	char 		*line;
+	t_commands 	coms;
 
-	initstruct(&g_builtins);
-	status = 1;
-	while (status)
+	line = NULL;
+	initcmds(&coms);
+	while (1)
 	{
-		write(1, ">$ ". 3);
-		get_next_line(0, &line);
-		args = ft_split(line, ' ');
-		status = sh_execute(args);
-		free(line);
-		free(args);
+		if (takeinput(&line))
+			continue ;
+		processline(line, &coms);
 	}
 }

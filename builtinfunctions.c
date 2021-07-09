@@ -1,4 +1,4 @@
-#include "minishell.h"
+/*#include "minishell.h"
 #include <unistd.h>
 #include <stdio.h>
 
@@ -20,4 +20,4 @@ int sh_pwd(char **args)
 int sh_exit(char **args)
 {
 	return (0);
-}
+}*/
