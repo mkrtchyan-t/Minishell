@@ -12,3 +12,4 @@ typedef	struct 	s_commmands
 
 
 void	initcmds(t_commands *coms);
+void 	checkquotes(char *line);

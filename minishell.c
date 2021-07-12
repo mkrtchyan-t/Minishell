@@ -32,6 +32,7 @@ void 	processline(char *line, t_commands *coms)
 {
 	char **strpiped;
 
+	checkquotes(line);
 	strpiped = NULL;
 	strpiped = parsepipe(line);
 	if (strpiped[1] != NULL)
@@ -43,11 +44,10 @@ void 	processline(char *line, t_commands *coms)
 	}
 	else
 		parsespace(line, &coms->parsed);
-	printf("%s", coms->parsedpipe[1]);
 	//builtin handler... it must return 0 if it's builtin 
 	//1 is simple command, 2 if pipe
-	//for executing without pipe use coms->parsed[0] \
-	and coms->parsed[1] for argument, use parsedpipe for pipe
+	//for executing without pipe use coms->parsed[0] 
+	//and coms->parsed[1] for argument, use parsedpipe for pipe
 }
 
 int 	main()

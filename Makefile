@@ -6,6 +6,7 @@ SRCS = libft/ft_strlen.c \
 		libft/ft_strdup.c \
 		init.c \
 		minishell.c \
+		quotes.c \
 
 OBJS = ${SRCS:.c=.o}
 
