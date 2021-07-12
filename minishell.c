@@ -44,6 +44,7 @@ void 	processline(char *line, t_commands *coms)
 	}
 	else
 		parsespace(line, &coms->parsed);
+	printf("%s", coms->parsed[0]);
 	//builtin handler... it must return 0 if it's builtin 
 	//1 is simple command, 2 if pipe
 	//for executing without pipe use coms->parsed[0] 
@@ -56,7 +57,8 @@ int 	main(int args, char **argv, char **envp)
 	t_commands 	coms;
 	t_envp		en;
 
-	if (argc != 1)
+	(void)argv;
+	if (args != 1)
 	{
 		printf("\nError arguments");
 		return (0);

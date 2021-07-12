@@ -19,3 +19,4 @@ typedef	struct 	s_envp
 
 void	initcmds(t_commands *coms);
 void 	checkquotes(char *line);
+void 	initenvp(t_envp *en, char **envp);
