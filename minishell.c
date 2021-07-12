@@ -50,13 +50,20 @@ void 	processline(char *line, t_commands *coms)
 	//and coms->parsed[1] for argument, use parsedpipe for pipe
 }
 
-int 	main()
+int 	main(int args, char **argv, char **envp)
 {
 	char 		*line;
 	t_commands 	coms;
+	t_envp		en;
 
+	if (argc != 1)
+	{
+		printf("\nError arguments");
+		return (0);
+	}
 	line = NULL;
 	initcmds(&coms);
+	initenvp(&en, envp);
 	while (1)
 	{
 		if (takeinput(&line))

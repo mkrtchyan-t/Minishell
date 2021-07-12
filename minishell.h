@@ -10,6 +10,12 @@ typedef	struct 	s_commmands
 	char 	**parsedpipe;
 }				t_commands;
 
+typedef	struct 	s_envp
+{
+	char **envp;
+}				t_envp;
+
+
 
 void	initcmds(t_commands *coms);
 void 	checkquotes(char *line);
