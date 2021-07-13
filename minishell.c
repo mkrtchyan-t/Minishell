@@ -28,7 +28,7 @@ void 	parsespace(char *firstpart, char ***parsed)
 	*parsed = ft_split(firstpart, ' ');
 }
 
-void 	processline(char *line, t_commands *coms)
+void	processline(char *line, t_commands *coms)
 {
 	char **strpiped;
 
@@ -44,7 +44,7 @@ void 	processline(char *line, t_commands *coms)
 	}
 	else
 		parsespace(line, &coms->parsed);
-	printf("%s", coms->parsed[0]);
+	// printf("%s", coms->parsed[0]);
 	//builtin handler... it must return 0 if it's builtin 
 	//1 is simple command, 2 if pipe
 	//for executing without pipe use coms->parsed[0] 
@@ -54,7 +54,7 @@ void 	processline(char *line, t_commands *coms)
 int 	main(int args, char **argv, char **envp)
 {
 	char 		*line;
-	t_commands 	coms;
+	t_commands	*coms;
 	t_envp		en;
 
 	(void)argv;
@@ -64,12 +64,20 @@ int 	main(int args, char **argv, char **envp)
 		return (0);
 	}
 	line = NULL;
-	initcmds(&coms);
+	coms = (t_commands *)malloc(sizeof(t_commands));
+	if (!coms)
+		exit(1);
+	initcmds(coms);
 	initenvp(&en, envp);
 	while (1)
 	{
 		if (takeinput(&line))
 			continue ;
-		processline(line, &coms);
+			processline(line, coms);
+		if (!builtin(coms))
+			if(!execution(coms->parsed))
+			{
+				ft_putstr_fd("shell: command error", 1);
+			}
 	}
 }

@@ -1,33 +1,49 @@
 NAME = minishell
 
-SRCS = libft/ft_strlen.c \
-		libft/ft_memcpy.c \
-		libft/ft_split.c \
-		libft/ft_strdup.c \
-		init.c \
+SRCS =	init.c \
 		minishell.c \
 		quotes.c \
+		execve.c \
+		builtins.c \
+
+LIBFT		= ./libft/libft.a
 
 OBJS = ${SRCS:.c=.o}
 
-RM 	 = rm -f
+RM	= rm -rf
 
-LDFLAGS = -L/Users/arastepa/.brew/opt/readline/lib
-CPPFLAGS = -I/Users/arestepa/.brew/opt/readline/include
+LDFLAGS = -L/Users/tmkrtchy/.brew/opt/readline/lib
+CPPFLAGS = -I/Users/tmkrtchy/.brew/opt/readline/include
+
+GREEN		= \033[0;32m
+RED			= \033[0;31m
+RESET		= \033[0;0m
 
 .c.o:
-		gcc -Wall -Wextra -Werror -c $< -o ${<:.c=.o}
+		@gcc -Wall -Wextra -Werror -c $< -o ${<:.c=.o}
+
+all: ${LIBFT} ${NAME}
+
+${LIBFT}:
+		@make -C ./libft --silent
+		@echo "$(GREEN) libft.a	created! $(RESET)"
 
 ${NAME}: $(OBJS)
-	 	gcc $(CPPFLAGS) $(LDFLAGS) -lreadline -Wall -Wextra -Werror -o ${NAME} ${OBJS}
-
-all: ${NAME}
+		@gcc $(CPPFLAGS) $(LDFLAGS) $(LIBFT) -lreadline -Wall -Wextra -Werror -o $@ ${OBJS}
+		@echo "$(GREEN) $(NAME)	created! $(RESET)"
+		@echo "$(GREEN) objects	created! $(RESET)"
 
 clean:
-	rm -f $(OBJS)
+	@make -C ./libft clean --silent
+	@$(RM) $(OBJS) --silent
+	@echo "$(RED) libft.a	deleted! $(RESET)"
+	@echo "$(RED) objectcs	deleted! $(RESET)"
+
 
 fclean: clean
-	rm -f $(NAME)
+	@$(RM) $(NAME) --silent
+	@$(RM) $(LIBFT) --silent
+	@echo "$(RED) $(NAME)	deleted! $(RESET)"
 
 re:	fclean all
 
