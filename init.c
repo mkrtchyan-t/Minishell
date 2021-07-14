@@ -1,5 +1,13 @@
 #include "minishell.h"
 
+void 	initredirs(t_redirs *redir)
+{
+	redir->redir = 0;
+	redir->infile = NULL;
+	redir->outfile = NULL;
+	redir->next = NULL;
+}
+
 char 	**copy_env(char **envp)
 {
 	int 	len;

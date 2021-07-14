@@ -28,11 +28,12 @@ void 	parsespace(char *firstpart, char ***parsed)
 	*parsed = ft_split(firstpart, ' ');
 }
 
-void	processline(char *line, t_commands *coms)
+void	processline(char *line, t_commands *coms, t_redirs *redir)
 {
 	char **strpiped;
 
 	checkquotes(line);
+	checkredirs(redir, line);
 	strpiped = NULL;
 	strpiped = parsepipe(line);
 	if (strpiped[1] != NULL)
@@ -56,6 +57,7 @@ int 	main(int args, char **argv, char **envp)
 	char		*line;
 	t_commands	*coms;
 	t_envp		en;
+	t_redirs	redir;
 
 	(void)argv;
 	if (args != 1)
@@ -69,12 +71,13 @@ int 	main(int args, char **argv, char **envp)
 		exit(1);
 	initcmds(coms);
 	initenvp(&en, envp);
+	//initredirs(&redir);
 	welcome_msg();
 	while (1)
 	{
 		if (takeinput(&line))
 			continue ;
-			processline(line, coms);
+			processline(line, coms, &redir);
 		if (!builtin(coms))
 			if(!execution(coms->parsed))
 			{

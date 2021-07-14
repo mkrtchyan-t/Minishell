@@ -18,6 +18,14 @@ typedef	struct 	s_commmands
 	char 	**parsedpipe;
 }				t_commands;
 
+typedef struct 	s_redirects
+{
+	int 				redir;
+	char 				*infile;
+	char 				*outfile;
+	struct s_redirects 	*next;
+}				t_redirs;
+
 typedef	struct 	s_envp
 {
 	char **envp;
@@ -25,10 +33,15 @@ typedef	struct 	s_envp
 
 
 
-void	initcmds(t_commands *coms);
-void 	checkquotes(char *line);
-void 	initenvp(t_envp *en, char **envp);
-int		execution(char **cmd);
-int		builtin(t_commands *cmd);
-void	goodbye_msg();
-void	welcome_msg();
+void		initcmds(t_commands *coms);
+void 		checkquotes(char *line);
+void 		initenvp(t_envp *en, char **envp);
+int			execution(char **cmd);
+int			builtin(t_commands *cmd);
+void		goodbye_msg();
+void		welcome_msg();
+void 		checkredirs(t_redirs *redirs, char *line);
+void 		initredirs(t_redirs *redir);
+int			addback(t_redirs **a, t_redirs *new);
+t_redirs	*last(t_redirs *lst);
+
