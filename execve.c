@@ -1,21 +1,24 @@
 #include "minishell.h"
 
-int		execution(char **cmd)
+// void	fill_cmd(char **cmd)
+// {
+// 	char	**arr
+// }
+
+int	execution(char **cmd)
 {
-	char *env;
-	char **path;
-	int i = 0;
-	int len;
-	DIR *dir;
-	int pid;
-	struct dirent *dp;
-	char *newname = ft_strjoin("/", cmd[0]);
-	char *argv[] = {cmd[0], NULL};
+	char	*env;
+	char	**path;
+	int		i;
+	int		len;
+	DIR		*dir;
+	int		pid;
+	struct	dirent *dp;
+	char	*newname;
+	// char	*argv[] = {cmd[0], NULL};
 
-	// char cwd[1024];
-	// getcwd(cwd, sizeof(cwd));
-	// ft_putstr_fd(cwd, 1);
-
+	i = 0;
+	newname = ft_strjoin("/", cmd[0]);
 	env = getenv("PATH");
 	path = ft_split(env, ':');
 	while (path[i])
@@ -30,9 +33,15 @@ int		execution(char **cmd)
 				pid = fork();
 				if (pid == 0)
 				{
-					if ((execve(ft_strjoin(path[i], newname), argv, NULL)) == -1)
+					if ((execve(ft_strjoin(path[i], newname), cmd, NULL)) == -1)
 						ft_putstr_fd("error while executing the command", 1);
 				}
+				else if (pid < 0)
+				{
+					ft_putstr_fd("sh: process error", 1);
+				}
+				else
+					wait(0);
 			}
 		}
 		i++;

@@ -1,4 +1,5 @@
 #include "libft/libft.h"
+#include "get_next_line/get_next_line.h"
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -29,3 +30,5 @@ void 	checkquotes(char *line);
 void 	initenvp(t_envp *en, char **envp);
 int		execution(char **cmd);
 int		builtin(t_commands *cmd);
+void	goodbye_msg();
+void	welcome_msg();

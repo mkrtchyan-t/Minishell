@@ -2,20 +2,20 @@
 
 // echo
 // cd
-// pwd
+// pwd +
 // export
 // unset
 // env
-// exit
+// exit +
 
-int sh_cd(char *cmd)
+int sh_cd(t_commands *cmd)
 {
-	if (cmd == NULL)
+	if (cmd->parsed[1] == NULL)
 	{
-		if (chdir("HOME") != 0)
+		if (chdir("~/") != 0)
 			strerror(errno);
 	}
-	else if (chdir(cmd) != 0)
+	else if (chdir("get_next_line") != 0)
 		strerror(errno);
 	return (1);
 }
@@ -47,16 +47,37 @@ int	builtin(t_commands *cmd)
 		}
 		else if (ft_strcmp(cmd->parsed[i], "cd") == 0)
 		{
-			sh_cd(cmd->parsed[i]);
+			ft_putstr_fd("i still dont work:)", 1);
+			// sh_cd(cmd);
+			return (1);
 		}
 		else if (ft_strcmp(cmd->parsed[i], "exit") == 0)
 		{
+			goodbye_msg();
 			sh_exit();
+			return (1);
 		}
-		else
+		else if (ft_strcmp(cmd->parsed[i], "echo") == 0)
 		{
-			return (0);
+			ft_putstr_fd("i still dont work:)", 1);
+			return (1);
 		}
+		else if (ft_strcmp(cmd->parsed[i], "export") == 0)
+		{
+			ft_putstr_fd("i still dont work:)", 1);
+			return (1);
+		}
+		else if (ft_strcmp(cmd->parsed[i], "unset") == 0)
+		{
+			ft_putstr_fd("i still dont work:)", 1);
+			return (1);
+		}
+		else if (ft_strcmp(cmd->parsed[i], "env") == 0)
+		{
+			ft_putstr_fd("i still dont work:)", 1);
+			return (1);
+		}
+		i++;
 	}
 	return (0);
 }

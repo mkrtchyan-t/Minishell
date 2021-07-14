@@ -5,7 +5,7 @@ int 	takeinput(char **line)
 	char *buf;
 
 	(void)line;
-	buf = readline("\n$> ");
+	buf = readline("$> ");
 	if (ft_strlen(buf) != 0)
 	{
 		add_history(buf);
@@ -53,7 +53,7 @@ void	processline(char *line, t_commands *coms)
 
 int 	main(int args, char **argv, char **envp)
 {
-	char 		*line;
+	char		*line;
 	t_commands	*coms;
 	t_envp		en;
 
@@ -69,6 +69,7 @@ int 	main(int args, char **argv, char **envp)
 		exit(1);
 	initcmds(coms);
 	initenvp(&en, envp);
+	welcome_msg();
 	while (1)
 	{
 		if (takeinput(&line))

@@ -5,6 +5,9 @@ SRCS =	init.c \
 		quotes.c \
 		execve.c \
 		builtins.c \
+		messages.c \
+		get_next_line/get_next_line.c \
+		get_next_line/get_next_line_utils.c \
 
 LIBFT		= ./libft/libft.a
 
