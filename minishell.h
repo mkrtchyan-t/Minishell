@@ -21,8 +21,8 @@ typedef	struct 	s_commmands
 typedef struct 	s_redirects
 {
 	int 				redir;
-	char 				*infile;
-	char 				*outfile;
+	int 				type; // 1 for in 2 for out
+	char 				*file;
 	struct s_redirects 	*next;
 }				t_redirs;
 

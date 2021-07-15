@@ -6,7 +6,9 @@ int	addback(t_redirs **a, t_redirs *new)
 
 	lst = last(*a);
 	if (lst)
+	{
 		lst->next = new;
+	}
 	else
 		*a = new;
 	return (1);
