@@ -50,6 +50,7 @@ void	processline(char *line, t_commands *coms, t_redirs *redir)
 	//1 is simple command, 2 if pipe
 	//for executing without pipe use coms->parsed[0] 
 	//and coms->parsed[1] for argument, use parsedpipe for pipe
+	// printf("parsed: %s\t%s\t%s\n", coms->parsed[0], coms->parsed[1], coms->parsed[2]);
 }
 
 int 	main(int args, char **argv, char **envp)
@@ -81,7 +82,7 @@ int 	main(int args, char **argv, char **envp)
 		if (!builtin(coms))
 			if(!execution(coms->parsed))
 			{
-				ft_putstr_fd("shell: command error", 1);
+				ft_putstr_fd("shell: command not found", 1);
 			}
 	}
 }

@@ -15,7 +15,7 @@ int sh_cd(t_commands *cmd)
 		if (chdir("~/") != 0)
 			strerror(errno);
 	}
-	else if (chdir("get_next_line") != 0)
+	else if (chdir(cmd->parsed[1]) != 0)
 		strerror(errno);
 	return (1);
 }
@@ -30,6 +30,7 @@ void sh_pwd(void)
 
 int sh_exit(void)
 {
+	goodbye_msg();
 	exit(0);
 }
 
@@ -47,13 +48,12 @@ int	builtin(t_commands *cmd)
 		}
 		else if (ft_strcmp(cmd->parsed[i], "cd") == 0)
 		{
-			ft_putstr_fd("i still dont work:)", 1);
-			// sh_cd(cmd);
+			// ft_putstr_fd("i still dont work:)", 1);
+			sh_cd(cmd);
 			return (1);
 		}
 		else if (ft_strcmp(cmd->parsed[i], "exit") == 0)
 		{
-			goodbye_msg();
 			sh_exit();
 			return (1);
 		}

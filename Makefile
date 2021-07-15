@@ -17,8 +17,8 @@ OBJS = ${SRCS:.c=.o}
 
 RM	= rm -rf
 
-LDFLAGS = -L/Users/arastepa/.brew/opt/readline/lib
-CPPFLAGS = -I/Users/arastepa/.brew/opt/readline/include
+LDFLAGS = -L/Users/$$(whoami)/.brew/opt/readline/lib
+CPPFLAGS = -I/Users/$$(whoami)/.brew/opt/readline/include
 
 GREEN		= \033[0;32m
 RED			= \033[0;31m

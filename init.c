@@ -3,8 +3,7 @@
 void 	initredirs(t_redirs *redir)
 {
 	redir->redir = 0;
-	redir->infile = NULL;
-	redir->outfile = NULL;
+	redir->file = NULL;
 	redir->next = NULL;
 }
 
