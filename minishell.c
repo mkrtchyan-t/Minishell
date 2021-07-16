@@ -30,26 +30,60 @@ void 	parsespace(char *firstpart, char ***parsed)
 
 void	processline(char *line, t_all *all)
 {
-	char **strpiped;
+	char 		**strpiped;
+	int 		i;
+	t_commands 	*new;
 
+	i = 0;
+	new = NULL;
+	all->coms = NULL;
+	new = malloc(sizeof(t_commands));
 	checkquotes(line);
+	initcmds(new);
 	strpiped = NULL;
 	strpiped = parsepipe(line);
 	if (strpiped[1] != NULL)
-		all->coms->piped = 1;
-	if (all->coms->piped)
-	{
-		parsespace(strpiped[0], &all->coms->parsed);
-		parsespace(strpiped[1], &all->coms->parsedpipe);
+		new->piped = 1;
+	if (new->piped)
+	{	
+		i = 0;
+		while (strpiped[i])
+		{
+			parsespace(strpiped[i], &new->parsedpipe);
+			addbackcom(&all->coms, new);
+			new = malloc(sizeof(t_commands));
+			initcmds(new);
+			new->piped = 1;
+			i++;
+		}
 	}
 	else
-		parsespace(line, &all->coms->parsed);
+	{
+		parsespace(line, &new->parsed);
+		addbackcom(&all->coms, new);
+	}
 	checkredirs(line, all);
-	//for executing without pipe use all->cmd.parsed[0] 
-	//and all->cmd.parsed[1] for argument, use all->cmd.parsedpipe[0]
-	 //for pipe command and all->cmd.parsedpipe[1] for argument
-	//first filename handles out > or >> and then < <<
-	//
+	//for executing without pipe use 
+	/*int i = 0;
+		while (all->cmd->parsed[i] != NULL)
+		{
+			printf("%s", all->cmd->parsed[i]);
+			i++;
+		}
+	*/
+	//with pipe use
+	/*while (all->cmd)
+	{
+		int i = 0;
+		while (all->cmd->parsedpipe[i] != NULL)
+		{
+			printf("%s", all->cmd->parsedpipe[i]);
+			i++;
+		}
+		all->cmd = all->cmd->next;
+		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
+		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe
+	}*/
 }
 
 int 	main(int args, char **argv, char **envp)
@@ -69,9 +103,7 @@ int 	main(int args, char **argv, char **envp)
 	if (!all.coms)
 		exit(1);
 	initcmds(all.coms);
-	initfinal(&all.cmd);
 	initenvp(&en, envp);
-	//initredirs(&redir);
 	welcome_msg();
 	while (1)
 	{

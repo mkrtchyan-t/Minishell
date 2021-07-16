@@ -11,11 +11,12 @@
 #include <dirent.h>
 #include <errno.h>
 
-typedef	struct 	s_commmands
+typedef	struct 	s_commands
 {
-	int 	piped;
-	char 	**parsed;
-	char 	**parsedpipe;
+	int 				piped;
+	char 				**parsed;
+	char 				**parsedpipe;
+	struct s_commands	*next;
 }				t_commands;
 
 typedef struct 	s_redirects
@@ -35,13 +36,14 @@ typedef	struct 	s_cmdfinal
 {
 	char 	**parsed;
 	char 	**parsedpipe;
+	struct 	s_cmdfinal *next;
 }				t_cmdfinal;
 
 typedef struct 	s_all
 {
 	t_commands 	*coms;
 	t_redirs	*redir;
-	t_cmdfinal 	cmd;
+	t_cmdfinal 	*cmd;
 }				 t_all;
 
 void		initcmds(t_commands *coms);
@@ -56,4 +58,6 @@ int			addback(t_redirs **a, t_redirs *new);
 t_redirs	*last(t_redirs *lst);
 void 		initfinal(t_cmdfinal *cmds);
 void 		checkredirs(char *line, t_all *all);
+int			addbackcom(t_commands **a, t_commands *new);
+int			addbackcmd(t_cmdfinal **a, t_cmdfinal *new);
 

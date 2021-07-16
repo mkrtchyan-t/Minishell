@@ -10,6 +10,7 @@ SRCS =	init.c \
 		get_next_line/get_next_line_utils.c \
 		checkredirects.c \
 		utils.c \
+		utils2.c \
 
 LIBFT		= ./libft/libft.a
 

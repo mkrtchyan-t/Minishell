@@ -89,24 +89,24 @@ void 	checkredirsin(t_redirs **redir, char *line)
 	}
 }
 
-int	checkmalloc(t_commands *coms)
+int	checkmalloc(char **str)
 {
 	int 	i;
 	int 	j;
 
 	j = 0;
 	i = 0;
-	while (coms->parsed[i])
+	while (str[i])
 	{
-		if ((coms->parsed[i][0] == '<' && coms->parsed[i][1] == '<') \
-			|| (coms->parsed[i][0] == '>' && coms->parsed[i][1] == '>') ||
-			(coms->parsed[i][0] == '<' && coms->parsed[i][1] != '<') \
-			|| (coms->parsed[i][0] == '>' && coms->parsed[i][1] != '>'))
+		if ((str[i][0] == '<' && str[i][1] == '<') \
+			|| (str[i][0] == '>' && str[i][1] == '>') ||
+			(str[i][0] == '<' && str[i][1] != '<') \
+			|| (str[i][0] == '>' && str[i][1] != '>'))
 		{
 			i++;
 		}
-		else if ((ft_strcmp(coms->parsed[i], ">") == 0) || (ft_strcmp(coms->parsed[i], ">>") == 0)\
-			|| ft_strcmp(coms->parsed[i], "<") == 0 || ft_strcmp(coms->parsed[i], "<<") == 0)
+		else if ((ft_strcmp(str[i], ">") == 0) || (ft_strcmp(str[i], ">>") == 0)\
+			|| ft_strcmp(str[i], "<") == 0 || ft_strcmp(str[i], "<<") == 0)
 		{
 			i += 2;
 		}
@@ -119,7 +119,7 @@ int	checkmalloc(t_commands *coms)
 	return (j);
 }
 
-char	**checkcommand(char **str, t_commands *coms)
+char	**checkcommand(char **str)
 {
 	int 	i;
 	char 	**cmd;
@@ -128,7 +128,7 @@ char	**checkcommand(char **str, t_commands *coms)
 
 	j = 0;
 	i = 0;
-	len = checkmalloc(coms);
+	len = checkmalloc(str);
 	cmd = malloc(sizeof(char *) * (len + 1));
 	while (str[i])
 	{
@@ -157,16 +157,29 @@ char	**checkcommand(char **str, t_commands *coms)
 
 void 	checkredirs(char *line, t_all *all)
 {
-	t_redirs redir;
+	t_redirs 	redir;
+	int 	 	i;
+	t_cmdfinal *new;
 
+	i = 0;
+	new = malloc(sizeof(t_cmdfinal));
 	all->redir = &redir;
 	checkredirsout(&all->redir, line);
 	checkredirsin(&all->redir, line);
 	if (all->coms->piped == 0)
-		all->cmd.parsed = checkcommand(all->coms->parsed, all->coms);
+	{
+		new->parsed = checkcommand(all->coms->parsed);
+		all->cmd = new;
+	}
 	else
 	{
-		all->cmd.parsed = checkcommand(all->coms->parsed, all->coms);
-		all->cmd.parsedpipe = checkcommand(all->coms->parsedpipe, all->coms);
+		while (all->coms)
+		{
+			new->parsedpipe = checkcommand(all->coms->parsedpipe);
+			addbackcmd(&all->cmd, new);
+			new = malloc(sizeof(t_cmdfinal));
+			all->coms = all->coms->next;
+			i++;
+		}
 	}
 }
