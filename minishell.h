@@ -31,7 +31,18 @@ typedef	struct 	s_envp
 	char **envp;
 }				t_envp;
 
+typedef	struct 	s_cmdfinal
+{
+	char 	**parsed;
+	char 	**parsedpipe;
+}				t_cmdfinal;
 
+typedef struct 	s_all
+{
+	t_commands 	*coms;
+	t_redirs	redir;
+	t_cmdfinal 	cmd;
+}				 t_all;
 
 void		initcmds(t_commands *coms);
 void 		checkquotes(char *line);
@@ -40,8 +51,9 @@ int			execution(char **cmd);
 int			builtin(t_commands *cmd);
 void		goodbye_msg();
 void		welcome_msg();
-void 		checkredirs(t_redirs *redirs, char *line);
 void 		initredirs(t_redirs *redir);
 int			addback(t_redirs **a, t_redirs *new);
 t_redirs	*last(t_redirs *lst);
+void 		initfinal(t_cmdfinal *cmds);
+void 		checkredirs(char *line, t_all *all);
 

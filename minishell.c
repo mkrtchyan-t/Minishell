@@ -28,37 +28,33 @@ void 	parsespace(char *firstpart, char ***parsed)
 	*parsed = ft_split(firstpart, ' ');
 }
 
-void	processline(char *line, t_commands *coms, t_redirs *redir)
+void	processline(char *line, t_all *all)
 {
 	char **strpiped;
 
 	checkquotes(line);
-	checkredirs(redir, line);
 	strpiped = NULL;
 	strpiped = parsepipe(line);
 	if (strpiped[1] != NULL)
-		coms->piped = 1;
-	if (coms->piped)
+		all->coms->piped = 1;
+	if (all->coms->piped)
 	{
-		parsespace(strpiped[0], &coms->parsed);
-		parsespace(strpiped[1], &coms->parsedpipe);
+		parsespace(strpiped[0], &all->coms->parsed);
+		parsespace(strpiped[1], &all->coms->parsedpipe);
 	}
 	else
-		parsespace(line, &coms->parsed);
-	// printf("%s", coms->parsed[0]);
-	//builtin handler... it must return 0 if it's builtin 
-	//1 is simple command, 2 if pipe
-	//for executing without pipe use coms->parsed[0] 
-	//and coms->parsed[1] for argument, use parsedpipe for pipe
-	// printf("parsed: %s\t%s\t%s\n", coms->parsed[0], coms->parsed[1], coms->parsed[2]);
+		parsespace(line, &all->coms->parsed);
+	checkredirs(line, all);
+	//for executing without pipe use all->cmd.parsed[0] 
+	//and all->cmd.parsed[1] for argument, use all->cmd.parsedpipe[0]
+	 //for pipe command and all->cmd.parsedpipe[1] for argument
 }
 
 int 	main(int args, char **argv, char **envp)
 {
 	char		*line;
-	t_commands	*coms;
 	t_envp		en;
-	t_redirs	redir;
+	t_all 		all;
 
 	(void)argv;
 	if (args != 1)
@@ -67,10 +63,11 @@ int 	main(int args, char **argv, char **envp)
 		return (0);
 	}
 	line = NULL;
-	coms = (t_commands *)malloc(sizeof(t_commands));
-	if (!coms)
+	all.coms = (t_commands *)malloc(sizeof(t_commands));
+	if (!all.coms)
 		exit(1);
-	initcmds(coms);
+	initcmds(all.coms);
+	initfinal(&all.cmd);
 	initenvp(&en, envp);
 	//initredirs(&redir);
 	welcome_msg();
@@ -78,7 +75,7 @@ int 	main(int args, char **argv, char **envp)
 	{
 		if (takeinput(&line))
 			continue ;
-			processline(line, coms, &redir);
+			processline(line, &all);
 		if (!builtin(coms))
 			if(!execution(coms->parsed))
 			{

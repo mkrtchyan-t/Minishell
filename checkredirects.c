@@ -89,8 +89,86 @@ void 	checkredirsin(t_redirs **redir, char *line)
 	}
 }
 
-void 	checkredirs(t_redirs *redir, char *line)
+int	checkmalloc(t_commands *coms)
 {
+	int 	i;
+	int 	j;
+
+	j = 0;
+	i = 0;
+	while (coms->parsed[i])
+	{
+		if ((coms->parsed[i][0] == '<' && coms->parsed[i][1] == '<') \
+			|| (coms->parsed[i][0] == '>' && coms->parsed[i][1] == '>') ||
+			(coms->parsed[i][0] == '<' && coms->parsed[i][1] != '<') \
+			|| (coms->parsed[i][0] == '>' && coms->parsed[i][1] != '>'))
+		{
+			i++;
+		}
+		else if ((ft_strcmp(coms->parsed[i], ">") == 0) || (ft_strcmp(coms->parsed[i], ">>") == 0)\
+			|| ft_strcmp(coms->parsed[i], "<") == 0 || ft_strcmp(coms->parsed[i], "<<") == 0)
+		{
+			i += 2;
+		}
+		else
+		{
+			j++;
+			i++;
+		}
+	}
+	return (j);
+}
+
+char	**checkcommand(char **str, t_commands *coms)
+{
+	int 	i;
+	char 	**cmd;
+	int 	len;
+	int 	j;
+
+	j = 0;
+	i = 0;
+	len = checkmalloc(coms);
+	cmd = malloc(sizeof(char *) * (len + 1));
+	while (str[i])
+	{
+		if ((ft_strcmp(str[i], ">") == 0) || (ft_strcmp(str[i], ">>") == 0)\
+			|| ft_strcmp(str[i], "<") == 0 || ft_strcmp(str[i], "<<") == 0)
+		{
+			i+=2;
+			printf("Hi");
+		}
+		else if ((str[i][0] == '<' && str[i][1] == '<') \
+			|| (str[i][0] == '>' && str[i][1] == '>') ||
+			(str[i][0] == '<' && str[i][1] != '<') \
+			|| (str[i][0] == '>' && str[i][1] != '>'))
+		{
+			i++;
+		}
+		else
+		{
+			cmd[j] = ft_strdup(str[i]);
+			j++;
+			i++;
+		}
+	}
+	cmd[j] = NULL;
+	return (cmd);
+}
+
+void 	checkredirs(char *line, t_all *all)
+{
+	t_redirs *redir;
+
+	redir = &all->redir;
 	checkredirsout(&redir, line);
 	checkredirsin(&redir, line);
+	int i = 0;
+	if (all->coms->piped == 0)
+		all->cmd.parsed = checkcommand(all->coms->parsed, all->coms);
+	else
+	{
+		all->cmd.parsed = checkcommand(all->coms->parsed, all->coms);
+		all->cmd.parsedpipe = checkcommand(all->coms->parsedpipe, all->coms);
+	}
 }

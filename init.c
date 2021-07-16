@@ -1,5 +1,11 @@
 #include "minishell.h"
 
+void 	initfinal(t_cmdfinal *cmds)
+{
+	cmds->parsed = NULL;
+	cmds->parsedpipe = NULL;
+}
+
 void 	initredirs(t_redirs *redir)
 {
 	redir->redir = 0;
