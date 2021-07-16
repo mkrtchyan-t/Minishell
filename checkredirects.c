@@ -136,7 +136,6 @@ char	**checkcommand(char **str, t_commands *coms)
 			|| ft_strcmp(str[i], "<") == 0 || ft_strcmp(str[i], "<<") == 0)
 		{
 			i+=2;
-			printf("Hi");
 		}
 		else if ((str[i][0] == '<' && str[i][1] == '<') \
 			|| (str[i][0] == '>' && str[i][1] == '>') ||
@@ -158,12 +157,11 @@ char	**checkcommand(char **str, t_commands *coms)
 
 void 	checkredirs(char *line, t_all *all)
 {
-	t_redirs *redir;
+	t_redirs redir;
 
-	redir = &all->redir;
-	checkredirsout(&redir, line);
-	checkredirsin(&redir, line);
-	int i = 0;
+	all->redir = &redir;
+	checkredirsout(&all->redir, line);
+	checkredirsin(&all->redir, line);
 	if (all->coms->piped == 0)
 		all->cmd.parsed = checkcommand(all->coms->parsed, all->coms);
 	else

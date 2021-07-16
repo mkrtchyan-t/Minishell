@@ -40,7 +40,7 @@ typedef	struct 	s_cmdfinal
 typedef struct 	s_all
 {
 	t_commands 	*coms;
-	t_redirs	redir;
+	t_redirs	*redir;
 	t_cmdfinal 	cmd;
 }				 t_all;
 

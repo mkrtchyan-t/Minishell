@@ -48,6 +48,8 @@ void	processline(char *line, t_all *all)
 	//for executing without pipe use all->cmd.parsed[0] 
 	//and all->cmd.parsed[1] for argument, use all->cmd.parsedpipe[0]
 	 //for pipe command and all->cmd.parsedpipe[1] for argument
+	//first filename handles out > or >> and then < <<
+	//
 }
 
 int 	main(int args, char **argv, char **envp)
@@ -76,10 +78,10 @@ int 	main(int args, char **argv, char **envp)
 		if (takeinput(&line))
 			continue ;
 			processline(line, &all);
-		if (!builtin(coms))
+		/*if (!builtin(coms))
 			if(!execution(coms->parsed))
 			{
 				ft_putstr_fd("shell: command not found", 1);
-			}
+			}*/
 	}
 }
