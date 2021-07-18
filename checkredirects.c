@@ -162,7 +162,9 @@ void 	checkredirs(char *line, t_all *all)
 	t_cmdfinal *new;
 
 	i = 0;
+	all->cmd = NULL;
 	new = malloc(sizeof(t_cmdfinal));
+	initfinal(new);
 	all->redir = &redir;
 	checkredirsout(&all->redir, line);
 	checkredirsin(&all->redir, line);
@@ -178,6 +180,7 @@ void 	checkredirs(char *line, t_all *all)
 			new->parsedpipe = checkcommand(all->coms->parsedpipe);
 			addbackcmd(&all->cmd, new);
 			new = malloc(sizeof(t_cmdfinal));
+			initfinal(new);
 			all->coms = all->coms->next;
 			i++;
 		}

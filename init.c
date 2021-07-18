@@ -4,6 +4,7 @@ void 	initfinal(t_cmdfinal *cmds)
 {
 	cmds->parsed = NULL;
 	cmds->parsedpipe = NULL;
+	cmds->next = NULL;
 }
 
 void 	initredirs(t_redirs *redir)
