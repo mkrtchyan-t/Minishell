@@ -1,4 +1,4 @@
-./README.md
+README.md
 ./minishell
 ./a.out
-./*.o
+*.o
