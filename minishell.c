@@ -76,20 +76,20 @@ void	processline(char *line, t_all *all)
 	}
 	*/
 	//with pipe use
-	if (!all->cmd->parsed)
-	{
-		while (all->cmd)
-		{
-			int i = 0;
-			while (all->cmd->parsedpipe[i] != NULL)
-			{
-				printf("%s ", all->cmd->parsedpipe[i]);
-				i++;
-			}
-			all->cmd = all->cmd->next;
-			printf("\n");
-		}
-	}
+	// if (!all->cmd->parsed)
+	// {
+	// 	while (all->cmd)
+	// 	{
+	// 		int i = 0;
+	// 		while (all->cmd->parsedpipe[i] != NULL)
+	// 		{
+	// 			printf("%s ", all->cmd->parsedpipe[i]);
+	// 			i++;
+	// 		}
+	// 		all->cmd = all->cmd->next;
+	// 		printf("\n");
+	// 	}
+	// }
 	// else
 	// {
 	// 	while (all->cmd)
@@ -133,7 +133,7 @@ int 	main(int args, char **argv, char **envp)
 		if (takeinput(&line))
 			continue ;
 		processline(line, &all);
-		// builtin(all->coms);
-		// control_center(&all);
+		if (!(builtin(&all)))
+			control_center(&all);
 	}
 }

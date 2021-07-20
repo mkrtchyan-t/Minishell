@@ -41,3 +41,13 @@ int	cmd_size(t_cmdfinal *cmd)
 	}
 	return (i);
 }
+
+int	cmdline_size(char **cmd)
+{
+	int i;
+
+	i = 0;
+	while (cmd[i])
+		i++;
+	return (i);
+}

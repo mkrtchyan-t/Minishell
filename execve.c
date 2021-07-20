@@ -36,16 +36,13 @@ int	execution(t_all *all)
 	char	*newname;
 
 	i = 0;
-	printf("joining");
 	newname = ft_strjoin("/", all->cmd->parsed[0]);
-	printf("joined");
 	path = ft_split(getenv("PATH"), ':');
 	while (path[i])
 	{
 		if (!(dir = opendir(path[i])))
 			exit (1);
 		len = ft_strlen(all->cmd->parsed[0]);
-		printf("cmd len: %d", len);
 		while ((dp = readdir(dir)) != NULL)
 		{
 			if (dp->d_namlen == len && ft_strcmp(dp->d_name, all->cmd->parsed[0]) == 0)
@@ -53,18 +50,14 @@ int	execution(t_all *all)
 				pid = fork();
 				if (pid == 0)
 				{
-					if ((execve(ft_strjoin(path[i], newname), all->cmd->parsed, all->envp)) == -1)
-						ft_putstr_fd("sh: error while executing the command", 1);
+					if ((execve(ft_strjoin(path[i], newname), all->cmd->parsed, NULL)) == -1)
+						perror(all->cmd->parsed[0]);
 					return (0);
 				}
 				else if (pid < 0)
 					ft_putstr_fd("sh: process error", 1);
 				else
 					wait(0);
-			}
-			else
-			{
-				perror(all->cmd->parsed[0]);
 			}
 		}
 		i++;
@@ -82,7 +75,7 @@ int	execution(t_all *all)
 
 void	control_center(t_all *all)
 {
-	if (!all->cmd->parsedpipe[0])
+	if (!all->cmd->parsedpipe)
 		execution(all);
 	// else
 	// 	execution_pipe(all);

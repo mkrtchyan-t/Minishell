@@ -47,7 +47,7 @@ void 		checkquotes(char *line);
 void		initenvp(t_all *all, char **envp);
 int			execution(t_all *all);
 int			execution_pipe(t_all *all);
-int			builtin(t_commands *cmd);
+int			builtin(t_all *all);
 void		goodbye_msg();
 void		welcome_msg();
 void 		initredirs(t_redirs *redir);
@@ -59,4 +59,4 @@ int			addbackcom(t_commands **a, t_commands *);
 int			addbackcmd(t_cmdfinal **a, t_cmdfinal *);
 void		control_center(t_all *all);
 int			cmd_size(t_cmdfinal *cmd);
-
+int			cmdline_size(char **cmd);

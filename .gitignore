@@ -1,4 +1,5 @@
 README.md
-./minishell
+minishell
 ./a.out
 *.o
+libft/libft.a

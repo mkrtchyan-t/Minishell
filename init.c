@@ -23,7 +23,7 @@ char 	**copy_env(char **envp)
 	len = 0;
 	while (envp[len])
 		len++;
-	if (!(cpy = (char **)malloc(sizeof(char) * (len + 1))))
+	if (!(cpy = (char **)ft_calloc(sizeof(char *), (len + 1))))
 		return (0);
 	i = 0;
 	while (i < len)
