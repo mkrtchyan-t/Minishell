@@ -27,11 +27,6 @@ typedef struct 	s_redirects
 	struct s_redirects 	*next;
 }				t_redirs;
 
-typedef	struct 	s_envp
-{
-	char **envp;
-}				t_envp;
-
 typedef	struct 	s_cmdfinal
 {
 	char 	**parsed;
@@ -41,23 +36,27 @@ typedef	struct 	s_cmdfinal
 
 typedef struct 	s_all
 {
-	t_commands 	*coms;
+	t_commands	*coms;
 	t_redirs	*redir;
-	t_cmdfinal 	*cmd;
-}				 t_all;
+	t_cmdfinal	*cmd;
+	char		**envp;
+}	t_all;
 
 void		initcmds(t_commands *coms);
 void 		checkquotes(char *line);
-void 		initenvp(t_envp *en, char **envp);
-int			execution(char **cmd);
+void		initenvp(t_all *all, char **envp);
+int			execution(t_all *all);
+int			execution_pipe(t_all *all);
 int			builtin(t_commands *cmd);
 void		goodbye_msg();
 void		welcome_msg();
 void 		initredirs(t_redirs *redir);
-int			addback(t_redirs **a, t_redirs *new);
+int			addback(t_redirs **a, t_redirs *);
 t_redirs	*last(t_redirs *lst);
 void 		initfinal(t_cmdfinal *cmds);
 void 		checkredirs(char *line, t_all *all);
-int			addbackcom(t_commands **a, t_commands *new);
-int			addbackcmd(t_cmdfinal **a, t_cmdfinal *new);
+int			addbackcom(t_commands **a, t_commands *);
+int			addbackcmd(t_cmdfinal **a, t_cmdfinal *);
+void		control_center(t_all *all);
+int			cmd_size(t_cmdfinal *cmd);
 

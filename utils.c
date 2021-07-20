@@ -26,3 +26,18 @@ t_redirs *last(t_redirs *lst)
 	}
 	return (NULL);
 }
+
+int	cmd_size(t_cmdfinal *cmd)
+{
+	t_cmdfinal	*tmp;
+	int			i;
+
+	i = 0;
+	tmp = cmd;
+	while (tmp)
+	{
+		i++;
+		tmp = tmp->next;
+	}
+	return (i);
+}

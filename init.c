@@ -42,7 +42,7 @@ void	initcmds(t_commands *coms)
 	coms->next = NULL;
 }
 
-void 	initenvp(t_envp *en, char **envp)
+void 	initenvp(t_all *all, char **envp)
 {
-	en->envp = copy_env(envp);
+	all->envp = copy_env(envp);
 }

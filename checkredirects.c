@@ -185,4 +185,9 @@ void 	checkredirs(char *line, t_all *all)
 			i++;
 		}
 	}
+	while(all->redir)
+	{
+		printf("%d: %s\n", all->redir->type, all->redir->file);
+		all->redir = all->redir->next;
+	}
 }

@@ -63,7 +63,7 @@ void	processline(char *line, t_all *all)
 		addbackcom(&all->coms, new);
 	}
 	checkredirs(line, all);
-	//for executing without pipe use	
+	//for executing without pipe use
 	/*
 	if (all->cmd->parsed)
 	{
@@ -76,20 +76,35 @@ void	processline(char *line, t_all *all)
 	}
 	*/
 	//with pipe use
-	/*if (!all->cmd->parsed)
+	if (!all->cmd->parsed)
 	{
 		while (all->cmd)
 		{
 			int i = 0;
 			while (all->cmd->parsedpipe[i] != NULL)
 			{
-				printf("%s", all->cmd->parsedpipe[i]);
+				printf("%s ", all->cmd->parsedpipe[i]);
 				i++;
 			}
 			all->cmd = all->cmd->next;
+			printf("\n");
 		}
 	}
-		all->cmd = all->cmd->next;
+	// else
+	// {
+	// 	while (all->cmd)
+	// 	{
+	// 		int i = 0;
+	// 		while (all->cmd->parsed[i] != NULL)
+	// 		{
+	// 			printf("%s\n", all->cmd->parsed[i]);
+	// 			i++;
+	// 		}
+	// 		all->cmd = all->cmd->next;
+	// 		printf("\n");
+	// 	}
+	// }
+	/* all->cmd = all->cmd->next;
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
 		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe
 	*/
@@ -98,7 +113,6 @@ void	processline(char *line, t_all *all)
 int 	main(int args, char **argv, char **envp)
 {
 	char		*line;
-	t_envp		en;
 	t_all 		all;
 
 	(void)argv;
@@ -112,17 +126,14 @@ int 	main(int args, char **argv, char **envp)
 	if (!all.coms)
 		exit(1);
 	initcmds(all.coms);
-	initenvp(&en, envp);
-	welcome_msg();
+	initenvp(&all, envp);
+	// welcome_msg();
 	while (1)
 	{
 		if (takeinput(&line))
 			continue ;
-			processline(line, &all);
-		/*if (!builtin(coms))
-			if(!execution(coms->parsed))
-			{
-				ft_putstr_fd("shell: command not found", 1);
-			}*/
+		processline(line, &all);
+		// builtin(all->coms);
+		// control_center(&all);
 	}
 }
