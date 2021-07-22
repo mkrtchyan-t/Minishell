@@ -8,7 +8,7 @@
 // env +
 // exit +
 
-int	sh_cd(t_cmdfinal *cmd)
+int	cd(t_cmdfinal *cmd)
 {
 	if (cmd->parsed[1] == NULL)
 	{
@@ -20,7 +20,7 @@ int	sh_cd(t_cmdfinal *cmd)
 	return (1);
 }
 
-void	sh_pwd(void)
+void	pwd(void)
 {
 	char cwd[1024];
 
@@ -80,13 +80,13 @@ int	builtin(t_all *all)
 	{
 		if (ft_strcmp(all->cmd->parsed[i], "pwd") == 0)
 		{
-			sh_pwd();
+			pwd();
 			return (1);
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "cd") == 0)
 		{
 			// ft_putstr_fd("i still dont work:)", 1);
-			sh_cd(all->cmd);
+			cd(all->cmd);
 			return (1);
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "exit") == 0)

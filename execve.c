@@ -1,34 +1,10 @@
 #include "minishell.h"
 
-// void	make_array(t_cmdfinal *cmd)
-// {
-// 	int			i;
-// 	int			size;
-// 	char		**array;
-// 	t_cmdfinal	*tmp;
-
-// 	tmp = cmd;
-// 	i = 0;
-// 	size = cmd_size(cmd);
-// 	printf("cmd size: %d\n", size);
-// 	if (!(array = (char **)malloc(sizeof(char) * (size + 1))))
-// 		exit (1);
-// 	while (cmd->parsed)
-// 	{
-// 		array[i] = malloc(sizeof(char) * ft_strlen(cmd->parsed));
-// 		array[i] = cmd->parsed;
-// 		cmd->parsed = cmd->next;
-// 		printf("array[%d]: %s\n", i, array[i]);
-// 		i++;
-// 	}
-// 	array[i] = NULL;
-// 	cmd = tmp;
-// }
-
-int	execution(t_all *all)
+int	execution(char **cmd)
 {
 	char	**path;
 	int		i;
+	int		res;
 	int		len;
 	DIR		*dir;
 	int		pid;
@@ -36,31 +12,40 @@ int	execution(t_all *all)
 	char	*newname;
 
 	i = 0;
-	newname = ft_strjoin("/", all->cmd->parsed[0]);
+	res = 0;
+	newname = ft_strjoin("/", cmd[0]);
 	path = ft_split(getenv("PATH"), ':');
 	while (path[i])
 	{
 		if (!(dir = opendir(path[i])))
 			exit (1);
-		len = ft_strlen(all->cmd->parsed[0]);
+		len = ft_strlen(cmd[0]);
 		while ((dp = readdir(dir)) != NULL)
 		{
-			if (dp->d_namlen == len && ft_strcmp(dp->d_name, all->cmd->parsed[0]) == 0)
+			if (dp->d_namlen == len && ft_strcmp(dp->d_name, cmd[0]) == 0) //if the command is found
 			{
 				pid = fork();
 				if (pid == 0)
 				{
-					if ((execve(ft_strjoin(path[i], newname), all->cmd->parsed, NULL)) == -1)
-						perror(all->cmd->parsed[0]);
-					return (0);
+					if ((execve(ft_strjoin(path[i], newname), cmd, NULL)) != 0) //executes the command
+						perror(cmd[0]);
 				}
 				else if (pid < 0)
 					ft_putstr_fd("sh: process error", 1);
 				else
+				{
 					wait(0);
+					res = 1;
+				}
 			}
 		}
 		i++;
+	}
+	if (res == 0)
+	{
+		write(1, "sh: ", 4);
+		write(1, cmd[0], len);
+		ft_putstr_fd(": command not found", 1);
 	}
 	free(path);
 	closedir(dir);
@@ -69,14 +54,13 @@ int	execution(t_all *all)
 
 // int	execution_pipe(t_all *all)
 // {
-// 	all = all + 1;
-// 	return (1);
+
 // }
 
 void	control_center(t_all *all)
 {
 	if (!all->cmd->parsedpipe)
-		execution(all);
+		execution(all->cmd->parsed);
 	// else
 	// 	execution_pipe(all);
 }

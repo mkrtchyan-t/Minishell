@@ -83,7 +83,7 @@ void	processline(char *line, t_all *all)
 	// 		int i = 0;
 	// 		while (all->cmd->parsedpipe[i] != NULL)
 	// 		{
-	// 			printf("%s ", all->cmd->parsedpipe[i]);
+	// 			printf("%s\n", all->cmd->parsedpipe[i]);
 	// 			i++;
 	// 		}
 	// 		all->cmd = all->cmd->next;
@@ -92,17 +92,17 @@ void	processline(char *line, t_all *all)
 	// }
 	// else
 	// {
-	// 	while (all->cmd)
-	// 	{
-	// 		int i = 0;
-	// 		while (all->cmd->parsed[i] != NULL)
-	// 		{
-	// 			printf("%s\n", all->cmd->parsed[i]);
-	// 			i++;
-	// 		}
-	// 		all->cmd = all->cmd->next;
-	// 		printf("\n");
-	// 	}
+		// while (all->cmd)
+		// {
+		// 	int i = 0;
+		// 	while (all->cmd->parsed[i] != NULL)
+		// 	{
+		// 		printf("%s\n", all->cmd->parsed[i]);
+		// 		i++;
+		// 	}
+		// 	all->cmd = all->cmd->next;
+		// 	printf("\n");
+		// }
 	// }
 	/* all->cmd = all->cmd->next;
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
