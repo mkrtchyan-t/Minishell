@@ -44,14 +44,14 @@ void	print_env(t_all *all)
 		ft_putstr_fd(all->envp[i++], 1);
 }
 
-void	echo(t_all *all)
+void	echo_helper(t_all *all, int *fd)
 {
-	int	i;
-	int	size;
+	int		i;
+	int		size;
 
 	if (!all->cmd->parsed[1])
 	{
-		write(1, "\n", 1);
+		write(*fd, "\n", 1);
 		return ;
 	}
 	size = cmdline_size(all->cmd->parsed);
@@ -59,16 +59,42 @@ void	echo(t_all *all)
 		i = 1;
 	else
 		i = 0;
-	// printf("i: %d\n", i);
-	// printf("argv: %s\n", all->cmd->parsed[i]);
 	while(++i < size)
 	{
-		write(1, all->cmd->parsed[i], ft_strlen(all->cmd->parsed[i]));
+		if (ft_strcmp(all->cmd->parsed[i], "$?") != 0)
+			write(*fd, all->cmd->parsed[i], ft_strlen(all->cmd->parsed[i]));
+		else if (i < size)
+			ft_putnbr_fd(errno, *fd);
 		if (all->cmd->parsed[i + 1])
-			write(1, " ", 1);
+			write(*fd, " ", 1);
 	}
 	if (ft_strcmp(all->cmd->parsed[1], "-n") != 0)
-		write(1, "\n", 1);
+	write(*fd, "\n", 1);
+}
+
+void	echo(t_all *all)
+{
+	int		fd;
+	t_all	*tmp;
+
+	fd = 1;
+	tmp = all;
+	if (!all->redir)
+		echo_helper(all, &fd);
+	else
+	{
+		while (all->redir && all->redir->type == 2)
+		{
+			if((fd = open(all->redir->file, O_WRONLY | O_CREAT, 0777)) == -1 )
+			{
+				perror(all->redir->file);
+				exit(1);
+			}
+			echo_helper(all, &fd);
+			all->redir = all->redir->next;
+		}
+		all = tmp;
+	}
 }
 
 int	builtin(t_all *all)
