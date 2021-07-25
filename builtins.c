@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-// echo
+// echo +
 // cd
 // pwd +
 // export
