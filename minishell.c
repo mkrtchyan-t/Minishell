@@ -118,7 +118,7 @@ int 	main(int args, char **argv, char **envp)
 	(void)argv;
 	if (args != 1)
 	{
-		printf("\nError arguments");
+		ft_putstr_fd("Error: too many arguments", 1);
 		return (0);
 	}
 	line = NULL;

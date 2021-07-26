@@ -12,7 +12,7 @@ int	cd(t_cmdfinal *cmd)
 {
 	if (cmd->parsed[1] == NULL)
 	{
-		if (chdir("~/") != 0)
+		if (chdir(getenv("HOME")) != 0)
 			strerror(errno);
 	}
 	else if (chdir(cmd->parsed[1]) != 0)
@@ -122,7 +122,6 @@ int	builtin(t_all *all)
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "echo") == 0)
 		{
-			// ft_putstr_fd("i still dont work:)", 1);
 			echo(all);
 			return (1);
 		}

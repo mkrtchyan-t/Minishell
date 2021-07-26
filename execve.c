@@ -62,5 +62,5 @@ void	control_center(t_all *all)
 	if (!all->cmd->parsedpipe)
 		execution(all->cmd->parsed);
 	// else
-	// 	execution_pipe(all);
+	//	execution_pipe(all);
 }
