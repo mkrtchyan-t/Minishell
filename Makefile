@@ -11,6 +11,9 @@ SRCS =	init.c \
 		checkredirects.c \
 		utils.c \
 		utils2.c \
+		echo.c \
+		unset.c \
+		cdpwdenv.c 
 
 LIBFT		= ./libft/libft.a
 

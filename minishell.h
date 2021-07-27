@@ -66,5 +66,11 @@ int			addbackcmd(t_cmdfinal **a, t_cmdfinal *neww);
 void		control_center(t_all *all);
 int			cmd_size(t_cmdfinal *cmd);
 int			cmdline_size(char **cmd);
+void		echo(t_all *all);
+char		**unset(t_all *all);
+int			env_size(char **env);
+int			cd(t_cmdfinal *cmd);
+void		pwd(void);
+void		print_env(t_all *all);
 
 #endif
