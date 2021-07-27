@@ -39,13 +39,6 @@ void	print_env(t_all *all)
 	int 	i;
 
 	i = 0;
-	if (all->cmd->parsed[1])
-	{
-		write(1, "env: ", 5);
-		write(1, all->cmd->parsed[1], 1024);
-		write(1, ": Permission denied\n", 20);
-		return ;
-	}
 	while (all->envp[i])
 		ft_putstr_fd(all->envp[i++], 1);
 }
