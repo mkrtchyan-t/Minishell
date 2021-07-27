@@ -63,47 +63,36 @@ void	processline(char *line, t_all *all)
 		addbackcom(&all->coms, new);
 	}
 	checkredirs(line, all);
-	//for executing without pipe use
-	/*
-	if (all->cmd->parsed)
-	{
-		int i = 0;
-		while (all->cmd->parsed[i] != NULL)
-		{
-			printf("%s", all->cmd->parsed[i]);
-			i++;
-		}
-	}
-	*/
+	//for executing without pipe and
 	//with pipe use
-	// if (!all->cmd->parsed)
-	// {
-	// 	while (all->cmd)
-	// 	{
-	// 		int i = 0;
-	// 		while (all->cmd->parsedpipe[i] != NULL)
-	// 		{
-	// 			printf("%s\n", all->cmd->parsedpipe[i]);
-	// 			i++;
-	// 		}
-	// 		all->cmd = all->cmd->next;
-	// 		printf("\n");
-	// 	}
-	// }
-	// else
-	// {
-		// while (all->cmd)
-		// {
-		// 	int i = 0;
-		// 	while (all->cmd->parsed[i] != NULL)
-		// 	{
-		// 		printf("%s\n", all->cmd->parsed[i]);
-		// 		i++;
-		// 	}
-		// 	all->cmd = all->cmd->next;
-		// 	printf("\n");
-		// }
-	// }
+	/*if (!all->cmd->parsed)
+	{
+		while (all->cmd)
+	 	{
+	 		int i = 0;
+	 		while (all->cmd->parsedpipe[i] != NULL)
+	 		{
+				printf("%s\n", all->cmd->parsedpipe[i]);
+	 			i++;
+	 		}
+	 		all->cmd = all->cmd->next;
+	 		printf("\n");
+	 	}
+	 }
+	 else
+	 {
+		 while (all->cmd)
+		 {
+		 	int i = 0;
+		 	while (all->cmd->parsed[i] != NULL)
+		 	{
+		 		printf("%s\n", all->cmd->parsed[i]);
+		 		i++;
+		 	}
+		 	all->cmd = all->cmd->next;
+		 	printf("\n");
+		 }
+	 }*/
 	/* all->cmd = all->cmd->next;
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
 		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe

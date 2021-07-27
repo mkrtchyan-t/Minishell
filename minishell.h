@@ -31,7 +31,6 @@ typedef struct s_redirects
 	int  				typefileout;
 	struct s_redirects	*next;
 }	t_redirs;
-// type: 1 for in 2 for out
 
 typedef struct s_cmdfinal
 {
