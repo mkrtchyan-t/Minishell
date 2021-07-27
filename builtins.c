@@ -26,24 +26,16 @@ char	**delete_arg(t_all *all, int i)
 
 	j = -1;
 
-	env = (char **)malloc(sizeof(char) * (env_size(all->envp) - 1));
+	env = (char **)malloc(sizeof(char *) * (env_size(all->envp) - 1));
 	while (++j < i)
 	{
-		env[j] = (char *)malloc(sizeof(char) * (ft_strlen(all->envp[j]) + 1));
 		env[j] = ft_strdup(all->envp[j]);
-		printf("\nPRINTF: %s\n\n", env[j]);
-		printf("j: %d\n", j);
 	}
-	printf("mid j: %d\n", j);
-	free(all->envp[i]);
-	all->envp[i] = "\0";
 	while(all->envp[++i])
 	{
-		env[j] = (char *)malloc(sizeof(char) * (ft_strlen(all->envp[i]) + 1));
 		env[j] = ft_strdup(all->envp[i]);
 		j++;
 	}
-	free(all->envp);
 	return (env);
 }
 
@@ -51,15 +43,15 @@ char	**unset(t_all *all)
 {
 	int		i;
 	char	**env;
+	char	*str;
 
 	i = 0;
 	env = NULL;
 	while (all->envp[i])
 	{
-		printf("envp: %s\n" , all->envp[i]);
-		if (ft_strncmp(all->envp[i], all->cmd->parsed[1], ft_strlen(all->cmd->parsed[1])) == 0)
+		str = ft_strjoin(all->cmd->parsed[1], "=");
+		if (ft_strncmp(all->envp[i], str, ft_strlen(str)) == 0)
 		{
-			printf("i: %d\n", i);
 			env = delete_arg(all, i);
 			break ;
 		}
