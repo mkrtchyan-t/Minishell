@@ -6,8 +6,6 @@ SRCS =	init.c \
 		execve.c \
 		builtins.c \
 		messages.c \
-		get_next_line/get_next_line.c \
-		get_next_line/get_next_line_utils.c \
 		checkredirects.c \
 		utils.c \
 		utils2.c \
