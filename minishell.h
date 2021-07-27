@@ -45,6 +45,7 @@ typedef struct s_all
 	t_redirs	*redir;
 	t_cmdfinal	*cmd;
 	char		**envp;
+	int			return_val;
 }	t_all;
 
 void		initcmds(t_commands *coms);

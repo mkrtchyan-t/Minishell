@@ -129,7 +129,7 @@ int 	main(int args, char **argv, char **envp)
 		if (takeinput(&line))
 			continue ;
 		processline(line, &all);
-		/*if (!(builtin(&all)))
-			control_center(&all);*/
+		if (!(builtin(&all)))
+			control_center(&all);
 	}
 }
