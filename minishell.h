@@ -27,6 +27,8 @@ typedef struct s_redirects
 	int					redir;
 	char				*filein;
 	char 				*fileout;
+	int  				typefilein;
+	int  				typefileout;
 	struct s_redirects	*next;
 }	t_redirs;
 // type: 1 for in 2 for out

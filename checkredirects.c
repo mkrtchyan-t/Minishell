@@ -11,12 +11,14 @@ void 	checkredirsout(t_redirs **redir, char *line)
 	int 		i;
 	int 		j;
 	t_redirs 	*new;
+	int  		type;
 
 	new = NULL;
 	j = 0;
 	i = 0;
 	while (line[i] != '\0')
-	{	
+	{
+		type = ((line[i] == '>' && line[i + 1] == '>') ? 2: 0);
 		if ((line[i] == '>' && line[i + 1] == '>') || \
 			(line[i] == '>' && line[i + 1] != '>'))
 		{
@@ -24,6 +26,7 @@ void 	checkredirsout(t_redirs **redir, char *line)
 			initredirs(new);
 			new->redir = 1;
 			new->fileout = ft_strdup("");
+			new->typefileout = (type == 2) ? 2: 1;
 			while (line[i] == '>' && line[i])
 				i++;
 			while (ft_isspace(line[i]) && line[i])
@@ -51,12 +54,14 @@ void 	checkredirsin(t_redirs **redir, char *line)
 	int 		j;
 	t_redirs 	*new;
 	t_redirs  	*tmp;
+	int  		type;
 
 	new = NULL;
 	j = 0;
 	i = 0;
 	while (line[i] != '\0')
 	{	
+		type = (line[i] == '<' && line[i + 1] == '<') ? 2: 0;
 		if ((line[i] == '<' && line[i + 1] == '<') || \
 			(line[i] == '<' && line[i + 1] != '<'))
 		{
@@ -64,6 +69,7 @@ void 	checkredirsin(t_redirs **redir, char *line)
 			initredirs(new);
 			new->redir = 1;
 			new->filein = ft_strdup("");
+			new->typefilein = (type == 2) ? 2: 1;
 			while (line[i] == '<' && line[i])
 				i++;
 			while (ft_isspace(line[i]) && line[i])
@@ -84,6 +90,7 @@ void 	checkredirsin(t_redirs **redir, char *line)
 		while ((*redir)->next != NULL)
 			*redir = (*redir)->next;
 		(*redir)->filein = ft_strdup(new->filein);
+		(*redir)->typefilein = new->typefilein;
 		*redir = tmp;
 	}
 	else if (new)

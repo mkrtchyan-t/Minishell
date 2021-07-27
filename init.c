@@ -11,7 +11,9 @@ void 	initredirs(t_redirs *redir)
 {
 	redir->redir = 0;
 	redir->filein = NULL;
+	redir->typefilein = 0;
 	redir->fileout = NULL;
+	redir->typefileout = 0;
 	redir->next = NULL;
 }
 

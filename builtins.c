@@ -1,4 +1,4 @@
-#include "minishell.h"
+/*#include "minishell.h"
 
 // echo +
 // cd
@@ -143,4 +143,4 @@ int	builtin(t_all *all)
 		i++;
 	}
 	return (0);
-}
+}*/

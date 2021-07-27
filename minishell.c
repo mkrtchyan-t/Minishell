@@ -108,12 +108,13 @@ void	processline(char *line, t_all *all)
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
 		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe
 	*/
-	//for redir -
+	//for redir - filetypes - 1 for < or >, 2 for << or >>
 	/*while(all->redir)
-	 {
-	 	printf("%d:  %s\n  %s\n", all->redir->redir, all->redir->fileout, all->redir->filein);
+	{
+	 	printf("%d: fileintype: %d  fileouttype: %d  fileout:%s\n  filein:%s\n", all->redir->redir, all->redir->typefilein, \
+	 			all->redir->typefileout, all->redir->fileout, all->redir->filein);
 	 	all->redir = all->redir->next;
-	 }*/
+	}*/
 }
 
 int 	main(int args, char **argv, char **envp)
