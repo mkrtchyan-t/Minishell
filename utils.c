@@ -18,7 +18,7 @@ t_redirs *last(t_redirs *lst)
 {
 	while (lst)
 	{
-		if (!lst->next)
+		if (lst->next == NULL)
 		{
 			return (lst);
 		}

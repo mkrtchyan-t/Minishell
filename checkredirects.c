@@ -12,39 +12,36 @@ void 	checkredirsout(t_redirs **redir, char *line)
 	int 		j;
 	t_redirs 	*new;
 
-	*redir = NULL;
 	new = NULL;
 	j = 0;
 	i = 0;
 	while (line[i] != '\0')
 	{	
-		j = 0;
 		if ((line[i] == '>' && line[i + 1] == '>') || \
 			(line[i] == '>' && line[i + 1] != '>'))
 		{
-			new = malloc(sizeof(t_redirs));
+			new = (t_redirs *)malloc(sizeof(t_redirs));
 			initredirs(new);
-			new->type = 2;
 			new->redir = 1;
-			new->file = ft_strdup("");
+			new->fileout = ft_strdup("");
 			while (line[i] == '>' && line[i])
 				i++;
 			while (ft_isspace(line[i]) && line[i])
 				i++;
+			j = 0;
 			while (!ft_isspace(line[i]) && line[i] != '>' && line[i] != '<' && line[i])
 			{
-				new->file[j++] = line[i];
+				new->fileout[j++] = line[i];
 				i++;
 			}
 			i--;
 		}
-		if (new)
-		{
-			if (ft_strcmp(new->file, "") != 0)
-				addback(redir, new);
-		}
-		new = NULL;
 		i++;
+	}
+	if (new)
+	{
+		if (ft_strcmp(new->fileout, "") != 0)
+			addback(redir, new);
 	}
 }
 
@@ -53,39 +50,46 @@ void 	checkredirsin(t_redirs **redir, char *line)
 	int 		i;
 	int 		j;
 	t_redirs 	*new;
+	t_redirs  	*tmp;
 
 	new = NULL;
 	j = 0;
 	i = 0;
 	while (line[i] != '\0')
 	{	
-		j = 0;
 		if ((line[i] == '<' && line[i + 1] == '<') || \
 			(line[i] == '<' && line[i + 1] != '<'))
 		{
-			new = malloc(sizeof(t_redirs));
+			new = (t_redirs *)malloc(sizeof(t_redirs));
 			initredirs(new);
-			new->type = 1;
 			new->redir = 1;
-			new->file = ft_strdup("");
+			new->filein = ft_strdup("");
 			while (line[i] == '<' && line[i])
 				i++;
 			while (ft_isspace(line[i]) && line[i])
 				i++;
+			j = 0;
 			while (!ft_isspace(line[i]) && line[i] != '<' && line[i] != '>' && line[i])
 			{
-				new->file[j++] = line[i];
+				new->filein[j++] = line[i];
 				i++;
 			}
 			i--;
 		}
-		if (new)
-		{
-			if (ft_strcmp(new->file, "") != 0)
-				addback(redir, new);
-		}
-		new = NULL;
 		i++;
+	}
+	if (*redir != NULL && new)
+	{
+		tmp = *redir;
+		while ((*redir)->next != NULL)
+			*redir = (*redir)->next;
+		(*redir)->filein = ft_strdup(new->filein);
+		*redir = tmp;
+	}
+	else if (new)
+	{
+		if (ft_strcmp(new->filein, "") != 0)
+			addback(redir, new);
 	}
 }
 
@@ -157,17 +161,24 @@ char	**checkcommand(char **str)
 
 void 	checkredirs(char *line, t_all *all)
 {
-	t_redirs 	redir;
 	int 	 	i;
 	t_cmdfinal *new;
+	char 		**str;
 
 	i = 0;
 	all->cmd = NULL;
 	new = malloc(sizeof(t_cmdfinal));
 	initfinal(new);
-	all->redir = &redir;
-	checkredirsout(&all->redir, line);
-	checkredirsin(&all->redir, line);
+	i = 0;
+	str = ft_split(line, '|');
+	all->redir = NULL;
+	while (str[i] != NULL)
+	{	
+		checkredirsout(&all->redir, str[i]);
+		checkredirsin(&all->redir, str[i]);
+		i++;
+	}
+	i = 0;
 	if (all->coms->piped == 0)
 	{
 		new->parsed = checkcommand(all->coms->parsed);
@@ -185,9 +196,4 @@ void 	checkredirs(char *line, t_all *all)
 			i++;
 		}
 	}
-	// while(all->redir)
-	// {
-	// 	printf("%d: %s\n", all->redir->type, all->redir->file);
-	// 	all->redir = all->redir->next;
-	// }
 }

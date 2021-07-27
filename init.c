@@ -10,7 +10,8 @@ void 	initfinal(t_cmdfinal *cmds)
 void 	initredirs(t_redirs *redir)
 {
 	redir->redir = 0;
-	redir->file = NULL;
+	redir->filein = NULL;
+	redir->fileout = NULL;
 	redir->next = NULL;
 }
 
