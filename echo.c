@@ -14,7 +14,6 @@ void	var_check(t_all *all, int *i)
 		{
 			tmp = all->cmd->parsed[*i];
 			tmp++;
-			printf("tmp: %s\n", tmp);
 			ft_putstr_fd(getenv(tmp), 1);
 		}
 	}
@@ -40,7 +39,6 @@ static void	echo_helper(t_all *all, int *fd)
 	while(++i < size)
 	{
 		var_check(all, &i);
-		printf("i: %d\n", i);
 		if (ft_strcmp(all->cmd->parsed[i], "$?") == 0)
 			ft_putnbr_fd(all->return_val, *fd);
 		else

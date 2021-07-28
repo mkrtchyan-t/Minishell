@@ -50,7 +50,7 @@ typedef struct s_all
 void		initcmds(t_commands *coms);
 void		checkquotes(char *line);
 void		initenvp(t_all *all, char **envp);
-int			execution(char **cmd);
+int			execution(t_all *all);
 int			execution_pipe(t_all *all);
 int			builtin(t_all *all);
 void		goodbye_msg(void);

@@ -3,12 +3,9 @@
 int 	takeinput(char **line)
 {
 	char *buf;
-	char cwd[1024];
 
 	(void)line;
-	getcwd(cwd, sizeof(cwd));
-	write(1, "\033[0;31m", 1);
-	buf = readline("$> ");
+	buf = readline("\033[1;34mminishell\033[0;0m$> ");
 	if (ft_strlen(buf) != 0)
 	{
 		add_history(buf);
