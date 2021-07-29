@@ -7,7 +7,7 @@ int	env_size(char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	return (i + 1);
+	return (i);
 }
 
 static char	**delete_arg(t_all *all, int i)
@@ -17,7 +17,7 @@ static char	**delete_arg(t_all *all, int i)
 
 	j = -1;
 
-	env = (char **)malloc(sizeof(char *) * (env_size(all->envp) - 1));
+	env = (char **)malloc(sizeof(char *) * (env_size(all->envp)));
 	while (++j < i)
 	{
 		env[j] = ft_strdup(all->envp[j]);

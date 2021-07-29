@@ -51,7 +51,7 @@ int	execution(t_all *all)
 						perror(all->cmd->parsed[0]);
 				}
 				else if (pid < 0)
-					ft_putstr_fd("sh: process error", 1);
+					ft_putstr_fd(1, "sh: process error", 1);
 				else
 				{
 					wait(0);
@@ -63,9 +63,9 @@ int	execution(t_all *all)
 	}
 	if (res == 0)
 	{
-		write(1, "sh: ", 4);
-		write(1, all->cmd->parsed[0], len);
-		ft_putstr_fd(": command not found", 1);
+		ft_putstr_fd(0, "sh: ", 1);
+		ft_putstr_fd(0, all->cmd->parsed[0], 1);
+		ft_putstr_fd(1, ": command not found", 1);
 	}
 	free(path);
 	closedir(dir);

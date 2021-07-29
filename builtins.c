@@ -1,9 +1,9 @@
 #include "minishell.h"
 
-// echo +
+// echo +- THIS BITCH DOEASN'T WANT TO WORK PROPERLY
 // cd +
 // pwd +
-// export -
+// export +-
 // unset +
 // env +
 // exit +
@@ -17,12 +17,12 @@ int	builtin(t_all *all)
 	{
 		if (ft_strcmp(all->cmd->parsed[i], "pwd") == 0)
 		{
-			pwd();
+			all->return_val = pwd();
 			return (1);
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "cd") == 0)
 		{
-			cd(all->cmd);
+			all->return_val = cd(all);
 			return (1);
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "exit") == 0)
@@ -32,12 +32,13 @@ int	builtin(t_all *all)
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "echo") == 0)
 		{
-			echo(all);
+			all->return_val = echo(all);
 			return (1);
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "export") == 0)
 		{
-			ft_putstr_fd("i still dont work:)", 1);
+			// ft_putstr_fd(1, "i still dont work:)", 1);
+			all->envp = export_(all);
 			return (1);
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "unset") == 0)
