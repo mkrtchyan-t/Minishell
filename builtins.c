@@ -28,7 +28,7 @@ int	builtin(t_all *all)
 		else if (ft_strcmp(all->cmd->parsed[i], "exit") == 0)
 		{
 			// goodbye_msg();
-			exit(0);
+			exit(all->return_val);
 		}
 		else if (ft_strcmp(all->cmd->parsed[i], "echo") == 0)
 		{

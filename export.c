@@ -1,28 +1,46 @@
 #include "minishell.h"
 
+int	has_value(char *env)
+{
+	int	i;
+
+	i = 0;
+	while(env[i] != '=' && env[i])
+		i++;
+	if (env[i] == '=')
+		return (1);
+	return (0);
+}
+
+// void	export_env(char **envp)
+// {
+
+// }
+
 char	**export_(t_all *all)
 {
 	int		i;
+	int		done;
+	int		var_size;
 	int		size;
 	char	**env;
 
-	i = -1;
+	done = 0;
 	size = env_size(all->envp);
-	env = (char **)malloc(sizeof(char *) * (env_size(all->envp) + 1));
+	var_size = ft_strclen(all->cmd->parsed[1], '=') + 1;
+	i = -1;
+	env = (char **)malloc(sizeof(char **) * (env_size(all->envp) + 1));
 	while (++i < size)
 	{
-		env[i] = ft_strdup(all->envp[i]);
-	}
-	if (all->cmd->parsed[1])
-		env[size] = ft_strdup(all->cmd->parsed[1]);
-	else
-	{
-		i = 0;
-		while (all->envp[i])
+		if (ft_strncmp(all->envp[i], all->cmd->parsed[1], var_size) != 0)
+			env[i] = ft_strdup(all->envp[i]);
+		else
 		{
-			ft_putstr_fd(0, "declare -x ", 1);
-			ft_putstr_fd(1, all->envp[i++], 1);
+			env[i] = ft_strdup(all->cmd->parsed[1]);
+			done = 1;
 		}
 	}
+	if (!done)
+		env[size] = ft_strdup(all->cmd->parsed[1]);
 	return (env);
 }

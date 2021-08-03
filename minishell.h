@@ -12,6 +12,7 @@
 # include <fcntl.h>
 # include <dirent.h>
 # include <errno.h>
+#include <termios.h>
 
 typedef struct s_commands
 {
@@ -72,5 +73,12 @@ int			cd(t_all *all);
 int			pwd(void);
 void		print_env(t_all *all);
 char		**export_(t_all *all);
+void		ft_setenv(char **envp, char *value, char *key);
+char		*ft_getenv(char **envp ,char *var);
+size_t		ft_strclen(char *str, int c);
+int			has_value(char *env);
+
+// free functions
+void		free_envp(char **envp);
 
 #endif

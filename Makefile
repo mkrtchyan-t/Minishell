@@ -12,7 +12,9 @@ SRCS =	init.c \
 		echo.c \
 		unset.c \
 		cdpwdenv.c \
-		export.c
+		export.c \
+		free.c \
+		utils3.c
 
 LIBFT		= ./libft/libft.a
 

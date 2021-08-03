@@ -1,15 +1,5 @@
 #include "minishell.h"
 
-int	env_size(char **env)
-{
-	int	i;
-
-	i = 0;
-	while (env[i])
-		i++;
-	return (i);
-}
-
 static char	**delete_arg(t_all *all, int i)
 {
 	int		j;

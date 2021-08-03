@@ -1,37 +1,12 @@
 #include "minishell.h"
 
-char	*ft_getenv(char **envp ,char *var)
-{
-	int		i;
-	int		size;
-	char	*path;
-
-	i = 0;
-	path = NULL;
-	size = env_size(envp);
-	printf("env size: %d\n", size);
-	var = ft_strjoin(var, "=");
-	printf("var: %s\n", var);
-	while (i < size)
-	{
-		if (ft_strncmp(envp[i], var, ft_strlen(var)) == 0)
-		{
-			path = ft_strdup(&envp[i][ft_strlen(var)]);
-		}
-		printf("i: %d\n", i);
-		i++;
-	}
-	if (i == size && !path)
-		return (NULL);
-	printf("path: %s\n", path);
-	return (path);
-}
-
 int	cd(t_all *all)
 {
 	char	*path;
 	char	*tmp;
+	char	pwd[1024];
 
+	ft_setenv(all->envp, "OLDPWD", getcwd(pwd, sizeof(pwd)));
 	if (all->cmd->parsed[1] == NULL)
 	{
 		path = ft_getenv(all->envp, "HOME");
@@ -43,7 +18,7 @@ int	cd(t_all *all)
 		if (all->cmd->parsed[1][0] == 126)
 		{
 			tmp = ft_substr(all->cmd->parsed[1], 1, ft_strlen(all->cmd->parsed[1]) - 1);
-			path = ft_strjoin(getenv("HOME"), tmp);
+			path = ft_strjoin(path, tmp);
 		}
 		else
 			path = all->cmd->parsed[1];
@@ -51,6 +26,7 @@ int	cd(t_all *all)
 			perror(path);
 		strerror(errno);
 	}
+	ft_setenv(all->envp, "PWD", getcwd(pwd, sizeof(pwd)));
 	printf("errno: %d\n", errno);
 	return (errno);
 }
@@ -66,9 +42,13 @@ int	pwd(void)
 
 void	print_env(t_all *all)
 {
-	int 	i;
+	int	i;
 
 	i = 0;
 	while (all->envp[i])
-		ft_putstr_fd(1, all->envp[i++], 1);
+	{
+		if (has_value(all->envp[i]))
+			ft_putstr_fd(1, all->envp[i], 1);
+		i++;
+	}
 }
