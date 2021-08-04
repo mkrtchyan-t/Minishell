@@ -14,7 +14,8 @@ SRCS =	init.c \
 		cdpwdenv.c \
 		export.c \
 		free.c \
-		utils3.c
+		utils3.c \
+		# pipe.c
 
 LIBFT		= ./libft/libft.a
 

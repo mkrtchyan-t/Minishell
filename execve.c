@@ -1,23 +1,15 @@
 #include "minishell.h"
 
-char	*set_cmd_line(t_all *all)
+char	*get_cmd(t_all *all)
 {
 	int		i;
-	char	*tmp;
 	char	**command;
 
-	tmp = all->cmd->parsed[0];
-	if (tmp[0] == '/')
-	{
-		command = ft_split(tmp, '/');
-		i = 0;
-		while (command[i + 1])
-			i++;
-		tmp = command[i];
-	}
-	all->cmd->parsed[0] = tmp;
-	tmp = ft_strjoin("/", tmp);
-	return (tmp);
+	command = ft_split(all->cmd->parsed[0], '/');
+	i = 0;
+	while (command[i + 1])
+		i++;
+	return (command[i]);
 }
 
 int	execution(t_all *all)
@@ -33,8 +25,28 @@ int	execution(t_all *all)
 
 	i = 0;
 	res = 0;
-	newname = set_cmd_line(all);
+
+	if(all->cmd->parsed[0][0] == '/')
+	{
+		newname = all->cmd->parsed[0];
+		all->cmd->parsed[0] = get_cmd(all);
+		pid = fork();
+		if (pid == 0)
+		{
+			if ((execve(newname, all->cmd->parsed, NULL)) != 0) //executes the command
+			{
+				perror(newname);
+			}
+		}
+		else if (pid < 0)
+		{
+			perror("error");
+		}
+		wait(0);
+		return (errno);
+	}
 	path = ft_split(getenv("PATH"), ':');
+	newname = ft_strjoin("/", all->cmd->parsed[0]);
 	while (path[i])
 	{
 		if (!(dir = opendir(path[i])))
@@ -51,7 +63,7 @@ int	execution(t_all *all)
 						perror(all->cmd->parsed[0]);
 				}
 				else if (pid < 0)
-					ft_putstr_fd(1, "sh: process error", 1);
+					perror("error");
 				else
 				{
 					wait(0);
