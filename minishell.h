@@ -77,6 +77,7 @@ void		ft_setenv(char **envp, char *value, char *key);
 char		*ft_getenv(char **envp ,char *var);
 size_t		ft_strclen(char *str, int c);
 int			has_value(char *env);
+char		**ft_splitline(char const *s, char c);
 
 // free functions
 void		free_envp(char **envp);

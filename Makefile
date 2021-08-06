@@ -15,6 +15,7 @@ SRCS =	init.c \
 		export.c \
 		free.c \
 		utils3.c \
+		ft_splitline.c \
 		# pipe.c
 
 LIBFT		= ./libft/libft.a

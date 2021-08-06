@@ -25,7 +25,7 @@ char 	**parsepipe(char *line)
 
 void 	parsespace(char *firstpart, char ***parsed)
 {
-	*parsed = ft_split(firstpart, ' ');
+	*parsed = ft_splitline(firstpart, ' ');
 }
 
 void	processline(char *line, t_all *all)
@@ -129,7 +129,7 @@ int 	main(int args, char **argv, char **envp)
 		if (takeinput(&line))
 			continue ;
 		processline(line, &all);
-		if (!(builtin(&all)))
-			control_center(&all);
+		/*if (!(builtin(&all)))
+			control_center(&all);*/
 	}
 }
