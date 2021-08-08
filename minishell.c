@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int 	takeinput(char **line)
+int	takeinput(char **line)
 {
 	char *buf;
 
@@ -15,7 +15,7 @@ int 	takeinput(char **line)
 	return (1);
 }
 
-char 	**parsepipe(char *line)
+char	**parsepipe(char *line)
 {
 	char **strpiped;
 
@@ -23,7 +23,7 @@ char 	**parsepipe(char *line)
 	return(strpiped);
 }
 
-void 	parsespace(char *firstpart, char ***parsed)
+void	parsespace(char *firstpart, char ***parsed)
 {
 	*parsed = ft_splitline(firstpart, ' ');
 }
@@ -106,10 +106,21 @@ void	processline(char *line, t_all *all)
 	}*/
 }
 
-int 	main(int args, char **argv, char **envp)
+static void	sig_handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		ft_putstr_fd(0, "\033[12C\033[0K\n", 1);
+		ft_putstr_fd(0, "\r\033[1;34mminishell\033[0;0m$> ", 1);
+	}
+	if (sig == SIGQUIT)
+		ft_putstr_fd(0, "\033[12C\033[0K", 1);
+}
+
+int	main(int args, char **argv, char **envp)
 {
 	char		*line;
-	t_all 		all;
+	t_all		all;
 
 	(void)argv;
 	if (args != 1)
@@ -123,13 +134,15 @@ int 	main(int args, char **argv, char **envp)
 		exit(1);
 	initcmds(all.coms);
 	initenvp(&all, envp);
+	signal(SIGQUIT, sig_handler);
 	// welcome_msg();
 	while (1)
 	{
+		signal(SIGINT, sig_handler);
 		if (takeinput(&line))
 			continue ;
 		processline(line, &all);
-		/*if (!(builtin(&all)))
-			control_center(&all);*/
+		// if (!(builtin(&all)))
+			control_center(&all);
 	}
 }

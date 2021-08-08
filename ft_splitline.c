@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int 		inquotes(char const *str, int index)
+static int	inquotes(char const *str, int index)
 {
 	int start;
 	int last;
@@ -28,7 +28,7 @@ static int 		inquotes(char const *str, int index)
 	return (0);
 }
 
-static	int		count_words(char const *str, char c)
+static int	count_words(char const *str, char c)
 {
 	int	i;
 	int	count;
@@ -49,7 +49,7 @@ static	int		count_words(char const *str, char c)
 	return (count);
 }
 
-static	char	*malloc_tmp(char const *s, char c)
+static char	*malloc_tmp(char const *s, char c)
 {
 	char	*tmp;
 	int		i;
@@ -69,7 +69,7 @@ static	char	*malloc_tmp(char const *s, char c)
 	return (tmp);
 }
 
-char			**ft_splitline(char const *s, char c)
+char	**ft_splitline(char const *s, char c)
 {
 	char	**arr;
 	int		i;
