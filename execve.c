@@ -59,8 +59,11 @@ int	execution(t_all *all)
 				pid = fork();
 				if (pid == 0)
 				{
-					if ((execve(ft_strjoin(path[i], newname), all->cmd->parsed, NULL)) != 0) //executes the command
+					if ((execve(ft_strjoin(path[i], newname), all->cmd->parsed, NULL)) == -1) //executes the command
+					{
+						printf("errno: %d\n", errno);
 						perror(all->cmd->parsed[0]);
+					}
 				}
 				else if (pid < 0)
 					perror("error");
@@ -81,6 +84,7 @@ int	execution(t_all *all)
 	}
 	free(path);
 	closedir(dir);
+	all->return_val = errno;
 	return (1);
 }
 

@@ -12,7 +12,7 @@
 # include <fcntl.h>
 # include <dirent.h>
 # include <errno.h>
-#include <termios.h>
+# include <termios.h>
 
 typedef struct s_commands
 {
@@ -26,9 +26,9 @@ typedef struct s_redirects
 {
 	int					redir;
 	char				*filein;
-	char 				*fileout;
-	int  				typefilein;
-	int  				typefileout;
+	char				*fileout;
+	int					typefilein;
+	int					typefileout;
 	struct s_redirects	*next;
 }	t_redirs;
 
@@ -74,14 +74,17 @@ int			pwd(void);
 void		print_env(t_all *all);
 char		**export_(t_all *all);
 void		ft_setenv(char **envp, char *value, char *key);
-char		*ft_getenv(char **envp ,char *var);
+char		*ft_getenv(char **envp, char *var);
 size_t		ft_strclen(char *str, int c);
 int			has_value(char *env);
 char		**ft_splitline(char const *s, char c);
-void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count);
-int	ft_execve(t_all *all);
-char	*get_cmd(t_all *all);
-int	all_space(char *line);
+void		pipe_commands(t_all *all, t_cmdfinal *command, int p_count);
+int			ft_execve(t_all *all);
+char		*get_cmd(t_all *all);
+int			all_space(char *line);
+void		child_sig_handler(int sig);
+void		child_sig_handler_bash(int sig);
+
 
 // free functions
 void		free_envp(char **envp);

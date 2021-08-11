@@ -113,8 +113,6 @@ static void	sig_handler(int sig)
 		ft_putstr_fd(0, "\033[12C\033[0K\n", 1);
 		ft_putstr_fd(0, "\r\033[1;34mminishell\033[0;0m$> ", 1);
 	}
-	if (sig == SIGQUIT)
-		ft_putstr_fd(0, "\033[12C\033[0K", 1);
 }
 
 int	main(int args, char **argv, char **envp)
@@ -134,7 +132,7 @@ int	main(int args, char **argv, char **envp)
 		exit(1);
 	initcmds(all.coms);
 	initenvp(&all, envp);
-	signal(SIGQUIT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
 	// welcome_msg();
 	while (1)
 	{
