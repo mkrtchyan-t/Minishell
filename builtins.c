@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-// echo +- THIS BITCH DOEASN'T WANT TO WORK PROPERLY
+// echo +
 // cd +
 // pwd +
 // export +-
