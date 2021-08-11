@@ -4,7 +4,6 @@ int	var_check(t_all *all, int i, int *fd)
 {
 	char	*tmp;
 
-	// printf("i in var_check(): %d\n", i);
 	if (all->cmd->parsed[i][0] == '$' && all->cmd->parsed[i][1] != '?')
 	{
 		tmp = ft_strdup(&all->cmd->parsed[i][1]);
@@ -29,15 +28,12 @@ static int	echo_helper(t_all *all, int *fd)
 		i++;
 	while(++i < size)
 	{
-		// printf("i before var_check(): %d\n", i);
-		i = var_check(all, i, fd) + 1;
-		// printf("i after var_check(): %d\n", i);
-		// printf("size: %d\n", size);
+		i = var_check(all, i, fd);
 		if (all->cmd->parsed[i + 1])
 			write(*fd, " ", 1);
 		if (i < size && ft_strcmp(all->cmd->parsed[i], "$?") == 0)
 			ft_putnbr_fd(all->return_val, *fd);
-		else
+		else if (i < size && all->cmd->parsed[i][0] != '$')
 			write(*fd, all->cmd->parsed[i], ft_strlen(all->cmd->parsed[i]));
 	}
 	return (errno);
@@ -46,8 +42,8 @@ static int	echo_helper(t_all *all, int *fd)
 int	echo(t_all *all)
 {
 	int		fd;
-	t_all	*tmp;
 	int		ret;
+	t_all	*tmp;
 
 	fd = 1;
 	tmp = all;

@@ -141,8 +141,10 @@ int	main(int args, char **argv, char **envp)
 		signal(SIGINT, sig_handler);
 		if (takeinput(&line))
 			continue ;
-		processline(line, &all);
-		// if (!(builtin(&all)))
-			control_center(&all);
+		if (!all_space(line))
+			processline(line, &all);
+		else
+			continue ;
+		control_center(&all);
 	}
 }
