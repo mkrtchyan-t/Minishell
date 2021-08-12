@@ -24,15 +24,15 @@ OBJS = ${SRCS:.c=.o}
 
 RM	= rm -rf
 
-LDFLAGS = -L/Users/$$(whoami)/.brew/opt/readline/lib
-CPPFLAGS = -I/Users/$$(whoami)/.brew/opt/readline/include
+LDFLAGS = -L/Users/$(USER)/.brew/opt/readline/lib
+CPPFLAGS = -I/Users/$(USER)/.brew/opt/readline/include
 
 GREEN		= \033[0;32m
 RED			= \033[0;31m
 RESET		= \033[0;0m
 
-.c.o:
-		@gcc -Wall -Wextra -Werror -c $< -o ${<:.c=.o}
+#.c.o:
+	#	@gcc -Wall -Wextra -Werror -c $< -o ${<:.c=.o}
 
 all: ${LIBFT} ${NAME}
 
@@ -41,7 +41,7 @@ ${LIBFT}:
 		@echo "$(GREEN) libft.a	created! $(RESET)"
 
 ${NAME}: $(OBJS)
-		@gcc $(CPPFLAGS) $(LDFLAGS) $(LIBFT) -lreadline -Wall -Wextra -Werror -o $@ ${OBJS}
+		@gcc   $(LIBFT) -Wall -Wextra -Werror -o $@ ${OBJS} -lreadline $(LDFLAGS) $(CPPFLAGS)
 		@echo "$(GREEN) $(NAME)	created! $(RESET)"
 		@echo "$(GREEN) objects	created! $(RESET)"
 

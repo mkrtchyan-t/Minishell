@@ -110,8 +110,10 @@ static void	sig_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
-		ft_putstr_fd(0, "\033[12C\033[0K\n", 1);
-		ft_putstr_fd(0, "\r\033[1;34mminishell\033[0;0m$> ", 1);
+		rl_replace_line("", 0);
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_redisplay();
 	}
 }
 
