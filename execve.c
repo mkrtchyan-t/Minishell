@@ -45,7 +45,15 @@ int	execution(t_all *all)
 		wait(0);
 		return (errno);
 	}
-	path = ft_split(getenv("PATH"), ':');
+	path = ft_split(ft_getenv(all->envp, "PATH"), ':');
+	if (!path)
+	{
+		ft_putstr_fd(0, "sh: ", 1);
+		ft_putstr_fd(0, all->cmd->parsed[0], 1);
+		ft_putstr_fd(1, ": No such file or directory", 1);
+		all->return_val = 127;
+		return (0);
+	}
 	newname = ft_strjoin("/", all->cmd->parsed[0]);
 	while (path[i])
 	{
@@ -81,10 +89,11 @@ int	execution(t_all *all)
 		ft_putstr_fd(0, "sh: ", 1);
 		ft_putstr_fd(0, all->cmd->parsed[0], 1);
 		ft_putstr_fd(1, ": command not found", 1);
+		all->return_val = 127;
 	}
 	free(path);
 	closedir(dir);
-	all->return_val = errno;
+	// all->return_val = errno;
 	return (1);
 }
 

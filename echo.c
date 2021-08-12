@@ -7,7 +7,7 @@ int	var_check(t_all *all, int i, int *fd)
 	if (all->cmd->parsed[i][0] == '$' && all->cmd->parsed[i][1] != '?')
 	{
 		tmp = ft_strdup(&all->cmd->parsed[i][1]);
-		ft_putstr_fd(0, getenv(tmp), *fd);
+		ft_putstr_fd(0, ft_getenv(all->envp, tmp), *fd);
 	}
 	return (i);
 }
