@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	ft_execve(t_all *all)
+int	ft_execve(t_all *all, t_cmdfinal *command)
 {
 	// printf("ft execve\n");
 	char	**path;
@@ -13,11 +13,11 @@ int	ft_execve(t_all *all)
 
 	i = 0;
 	res = 0;
-	if(all->cmd->parsed[0][0] == '/')
+	if(command->parsedpipe[0][0] == '/')
 	{
-		newname = all->cmd->parsed[0];
-		all->cmd->parsed[0] = get_cmd(all);
-		if ((execve(newname, all->cmd->parsed, NULL)) != 0) //executes the command
+		newname = command->parsedpipe[0];
+		command->parsedpipe[0] = get_cmd(all);
+		if ((execve(newname, command->parsedpipe, NULL)) != 0) //executes the command
 		{
 			perror(newname);
 		}
@@ -25,19 +25,19 @@ int	ft_execve(t_all *all)
 		return (errno);
 	}
 	path = ft_split(getenv("PATH"), ':');
-	newname = ft_strjoin("/", all->cmd->parsed[0]);
+	newname = ft_strjoin("/", command->parsedpipe[0]);
 	while (path[i])
 	{
 		if (!(dir = opendir(path[i])))
 			exit (1);
-		len = ft_strlen(all->cmd->parsed[0]);
+		len = ft_strlen(command->parsedpipe[0]);
 		while ((dp = readdir(dir)) != NULL)
 		{
-			if (dp->d_namlen == len && ft_strcmp(dp->d_name, all->cmd->parsed[0]) == 0) //if the command is found
+			if (dp->d_namlen == len && ft_strcmp(dp->d_name, command->parsedpipe[0]) == 0) //if the command is found
 			{
-				if ((execve(ft_strjoin(path[i], newname), all->cmd->parsed, NULL)) != 0) //executes the command
+				if ((execve(ft_strjoin(path[i], newname), command->parsedpipe, NULL)) != 0) //executes the command
 				{
-					perror(all->cmd->parsed[0]);
+					perror(command->parsedpipe[0]);
 					// printf("executed\n");
 				}
 			}
@@ -57,66 +57,42 @@ int	ft_execve(t_all *all)
 
 void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 {
-	int		i;
-	int		j;
-	int		status;
-	int		pipefds[2 * p_count];
+	int		tmpin;
+	int 	pipefd[2];
+	int		tmpout;
+	int  	fdout;
+	int  	fdin;
 	pid_t	pid;
 
-	i = 0;
-	while (i < p_count)
-	{
-		if (pipe(pipefds + i * 2) < 0)
-		{
-			perror("couldn't pipe");
-		}
-		i++;
-	}
-
-	j = 0;
+	tmpin = dup(0);
+	tmpout = dup(1);
+	fdin = dup(tmpin);
 	while (command)
 	{
+		dup2(fdin, 0);
+		close(fdin);
+		if (command->next == NULL)
+		{
+			fdout = dup(tmpout);
+		}
+		else
+		{
+			pipe(pipefd);
+			fdout = pipefd[1];
+			fdin = pipefd[0];
+		}
+		dup2(fdout, 1);
+		close(fdout);
 		pid = fork();
 		if (pid == 0)
 		{
-			// if not last
-			if (command->next)
-			{
-				if (dup2(pipefds[j + 1], 1) < 0)
-				{
-					perror("dup2");
-				}
-			}
-			// if not first
-			if (j != 0)
-			{
-				if (dup2(pipefds[j - 2], 0) < 0)
-				{
-					perror("dup2");
-				}
-			}
-			i = 0;
-			while (i < p_count * 2)
-				close(pipefds[i++]);
-			if (ft_execve(all))
-			{
-				perror(command->parsedpipe[0]);
-			}
-		}
-		else if (pid < 0)
-		{
-			perror("error");
+			ft_execve(all, command);
 		}
 		command = command->next;
-		j += 2;
 	}
-	i = 0;
-	while (i < p_count * 2)
-		close(pipefds[i++]);
-	i = 0;
-	while (i < p_count)
-	{
-		wait(&status);
-		i++;
-	}
+	dup2(tmpin, 0);
+	dup2(tmpout, 1);
+	close(tmpin);
+	close(tmpout);
+	waitpid(pid, NULL, 0);
 }
