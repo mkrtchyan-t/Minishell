@@ -4,7 +4,6 @@ int	takeinput(char **line)
 {
 	char *buf;
 
-	(void)line;
 	buf = readline("\033[1;34mminishell\033[0;0m$> ");
 	if (ft_strlen(buf) != 0)
 	{
@@ -19,13 +18,27 @@ char	**parsepipe(char *line)
 {
 	char **strpiped;
 
-	strpiped = ft_split(line, '|');
+	strpiped = ft_splitline(line, '|');
 	return(strpiped);
 }
 
 void	parsespace(char *firstpart, char ***parsed)
 {
-	*parsed = ft_splitline(firstpart, ' ');
+	int 	i;
+	char 	**str;
+
+	i = 0;
+	str = ft_splitline(firstpart, ' ');
+	while (str[i] != NULL)
+		i++;
+	*parsed = (char **)malloc(sizeof(char *) * (i + 1));
+	i = 0;
+	while (str[i] != NULL)
+	{
+		(*parsed)[i] = trimquotes(str[i]);
+		i++;
+	}
+	(*parsed)[i] = NULL;
 }
 
 void	processline(char *line, t_all *all)
@@ -65,7 +78,7 @@ void	processline(char *line, t_all *all)
 	checkredirs(line, all);
 	//for executing without pipe and
 	//with pipe use
-	/*if (!all->cmd->parsed)
+	if (!all->cmd->parsed)
 	{
 		while (all->cmd)
 	 	{
@@ -92,7 +105,7 @@ void	processline(char *line, t_all *all)
 		 	all->cmd = all->cmd->next;
 		 	printf("\n");
 		 }
-	 }*/
+	 }
 	/* all->cmd = all->cmd->next;
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
 		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe
@@ -145,8 +158,8 @@ int	main(int args, char **argv, char **envp)
 			continue ;
 		if (!all_space(line))
 			processline(line, &all);
-		else
+		/*else
 			continue ;
-		control_center(&all);
+		control_center(&all);*/
 	}
 }

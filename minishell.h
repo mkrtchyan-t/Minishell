@@ -84,6 +84,7 @@ char		*get_cmd(t_all *all);
 int			all_space(char *line);
 void		child_sig_handler(int sig);
 void		child_sig_handler_bash(int sig);
+char 		*trimquotes(char *str);
 
 
 // free functions
