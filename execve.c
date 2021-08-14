@@ -99,12 +99,12 @@ int	execution(t_all *all)
 
 void	control_center(t_all *all)
 {
-	if (all->cmd->parsed)
+	if (all->cmd->parsed && !all->redir)
 	{
 		if (!builtin(all))
 			execution(all);
 	}
-	else if (all->cmd->parsedpipe)
+	else if (all->cmd->parsedpipe || all->redir)
 		pipe_commands(all, all->cmd, 1);
 	return ;
 }

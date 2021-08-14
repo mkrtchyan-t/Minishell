@@ -78,7 +78,7 @@ void	processline(char *line, t_all *all)
 	checkredirs(line, all);
 	//for executing without pipe and
 	//with pipe use
-	if (!all->cmd->parsed)
+	/*if (!all->cmd->parsed)
 	{
 		while (all->cmd)
 	 	{
@@ -105,7 +105,7 @@ void	processline(char *line, t_all *all)
 		 	all->cmd = all->cmd->next;
 		 	printf("\n");
 		 }
-	 }
+	 }*/
 	/* all->cmd = all->cmd->next;
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
 		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe
@@ -158,8 +158,8 @@ int	main(int args, char **argv, char **envp)
 			continue ;
 		if (!all_space(line))
 			processline(line, &all);
-		/*else
+		else
 			continue ;
-		control_center(&all);*/
+		control_center(&all);
 	}
 }

@@ -13,6 +13,7 @@
 # include <dirent.h>
 # include <errno.h>
 # include <termios.h>
+# include <fcntl.h> 
 
 typedef struct s_commands
 {

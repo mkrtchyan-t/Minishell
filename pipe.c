@@ -66,14 +66,34 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 
 	tmpin = dup(0);
 	tmpout = dup(1);
-	fdin = dup(tmpin);
+	if (all->redir->filein)
+	{
+		if (all->redir->typefilein == 1)
+		{
+			fdin = open(all->redir->filein, O_RDONLY);
+			if (command->parsedpipe == NULL)
+				command->parsedpipe = command->parsed;
+		}
+	}
+	else
+		fdin = dup(tmpin);
 	while (command)
 	{
 		dup2(fdin, 0);
 		close(fdin);
 		if (command->next == NULL)
 		{
-			fdout = dup(tmpout);
+			if (all->redir->fileout)
+			{
+				if (all->redir->typefileout == 1)
+					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY, 0644);
+				else
+					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_APPEND, 0644);
+				if (command->parsedpipe == NULL)
+					command->parsedpipe = command->parsed;
+			}
+			else
+				fdout = dup(tmpout);
 		}
 		else
 		{
