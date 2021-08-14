@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	ft_execve(t_all *all, t_cmdfinal *command)
+int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 {
 	// printf("ft execve\n");
 	char	**path;
@@ -37,8 +37,7 @@ int	ft_execve(t_all *all, t_cmdfinal *command)
 			{
 				if ((execve(ft_strjoin(path[i], newname), command->parsedpipe, NULL)) != 0) //executes the command
 				{
-					perror(command->parsedpipe[0]);
-					// printf("executed\n");
+						perror(command->parsedpipe[0]);
 				}
 			}
 		}
@@ -46,9 +45,9 @@ int	ft_execve(t_all *all, t_cmdfinal *command)
 	}
 	if (res == 0)
 	{
-		ft_putstr_fd(0, "sh: ", 1);
-		ft_putstr_fd(0, all->cmd->parsed[0], 1);
-		ft_putstr_fd(1, ": command not found", 1);
+		ft_putstr_fd(0, "sh: ", tmpout);
+		ft_putstr_fd(0, all->cmd->parsed[0], tmpout);
+		ft_putstr_fd(1, ": command not found", tmpout);
 	}
 	free(path);
 	closedir(dir);
@@ -106,7 +105,7 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		pid = fork();
 		if (pid == 0)
 		{
-			ft_execve(all, command);
+			ft_execve(all, command, fdout, tmpout);
 		}
 		command = command->next;
 	}
