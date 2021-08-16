@@ -149,6 +149,7 @@ int	main(int args, char **argv, char **envp)
 		exit(1);
 	initcmds(all.coms);
 	initenvp(&all, envp);
+	all.redir = NULL;
 	signal(SIGQUIT, SIG_IGN);
 	// welcome_msg();
 	while (1)

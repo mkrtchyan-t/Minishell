@@ -65,7 +65,7 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 
 	tmpin = dup(0);
 	tmpout = dup(1);
-	if (all->redir->filein)
+	if (all->redir && all->redir->filein)
 	{
 		if (all->redir->typefilein == 1)
 		{
@@ -82,7 +82,7 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		close(fdin);
 		if (command->next == NULL)
 		{
-			if (all->redir->fileout)
+			if (all->redir && all->redir->fileout)
 			{
 				if (all->redir->typefileout == 1)
 					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY, 0644);
