@@ -1,5 +1,61 @@
 #include "minishell.h"
 
+int	indquotes(char const *str, int index)
+{
+	int start;
+	int last;
+	int i;
+
+	i = 0;
+	start = 0;
+	last = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] == '\"')
+		{
+			start = i;
+			i++;
+			while (str[i] != '\"')
+				i++;
+			last = i;
+			break ;
+		}
+		i++;
+	}
+	if (start != last)
+		if (index >= start && index <= last)
+			return (1);
+	return (0);
+}
+
+int	insquotes(char const *str, int index)
+{
+	int start;
+	int last;
+	int i;
+
+	i = 0;
+	start = 0;
+	last = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] == '\'')
+		{
+			start = i;
+			i++;
+			while (str[i] != '\'')
+				i++;
+			last = i;
+			break ;
+		}
+		i++;
+	}
+	if (start != last)
+		if (index >= start && index <= last)
+			return (1);
+	return (0);
+}
+
 static int	inquotes(char const *str, int index)
 {
 	int start;
@@ -15,7 +71,7 @@ static int	inquotes(char const *str, int index)
 		{
 			start = i;
 			i++;
-			while (str[i] != '\"' && str[i] != '\"')
+			while (str[i] != '\"' && str[i] != '\'')
 				i++;
 			last = i;
 			break ;

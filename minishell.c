@@ -5,12 +5,14 @@ int	takeinput(char **line)
 	char *buf;
 
 	buf = readline("\033[1;34mminishell\033[0;0m$> ");
-	if (ft_strlen(buf) != 0)
+	if (buf && ft_strlen(buf) != 0)
 	{
 		add_history(buf);
 		*line = ft_strdup(buf);
 		return (0);
 	}
+	else if (buf == NULL)
+		return (2);
 	return (1);
 }
 
@@ -22,7 +24,7 @@ char	**parsepipe(char *line)
 	return(strpiped);
 }
 
-void	parsespace(char *firstpart, char ***parsed)
+void	parsespace(char *firstpart, char ***parsed, t_all *all)
 {
 	int 	i;
 	char 	**str;
@@ -31,6 +33,7 @@ void	parsespace(char *firstpart, char ***parsed)
 	str = ft_splitline(firstpart, ' ');
 	while (str[i] != NULL)
 		i++;
+	checkdolar(str, all);
 	*parsed = (char **)malloc(sizeof(char *) * (i + 1));
 	i = 0;
 	while (str[i] != NULL)
@@ -41,7 +44,7 @@ void	parsespace(char *firstpart, char ***parsed)
 	(*parsed)[i] = NULL;
 }
 
-void	processline(char *line, t_all *all)
+int	processline(char *line, t_all *all)
 {
 	char 		**strpiped;
 	int 		i;
@@ -51,7 +54,11 @@ void	processline(char *line, t_all *all)
 	new = NULL;
 	all->coms = NULL;
 	new = malloc(sizeof(t_commands));
-	checkquotes(line);
+	if (!checkquotes(line))
+	{
+		ft_putstr_fd(1, "unclosed quotes", 1);
+		return (0);
+	}
 	initcmds(new);
 	strpiped = NULL;
 	strpiped = parsepipe(line);
@@ -62,7 +69,7 @@ void	processline(char *line, t_all *all)
 		i = 0;
 		while (strpiped[i])
 		{
-			parsespace(strpiped[i], &new->parsedpipe);
+			parsespace(strpiped[i], &new->parsedpipe, all);
 			addbackcom(&all->coms, new);
 			new = malloc(sizeof(t_commands));
 			initcmds(new);
@@ -72,7 +79,7 @@ void	processline(char *line, t_all *all)
 	}
 	else
 	{
-		parsespace(line, &new->parsed);
+		parsespace(line, &new->parsed, all);
 		addbackcom(&all->coms, new);
 	}
 	checkredirs(line, all);
@@ -117,6 +124,7 @@ void	processline(char *line, t_all *all)
 	 			all->redir->typefileout, all->redir->fileout, all->redir->filein);
 	 	all->redir = all->redir->next;
 	}*/
+	return (1);
 }
 
 static void	sig_handler(int sig)
@@ -136,6 +144,7 @@ int	main(int args, char **argv, char **envp)
 {
 	char		*line;
 	t_all		all;
+	int 		input;
 
 	(void)argv;
 	if (args != 1)
@@ -149,16 +158,21 @@ int	main(int args, char **argv, char **envp)
 		exit(1);
 	initcmds(all.coms);
 	initenvp(&all, envp);
-	all.redir = NULL;
 	signal(SIGQUIT, SIG_IGN);
 	// welcome_msg();
 	while (1)
 	{
 		signal(SIGINT, sig_handler);
-		if (takeinput(&line))
+		input = takeinput(&line);
+		if (input == 1)
 			continue ;
+		else if (input == 2)
+			break ;
 		if (!all_space(line))
-			processline(line, &all);
+		{
+			if (!processline(line, &all))
+				continue ;
+		}
 		else
 			continue ;
 		control_center(&all);

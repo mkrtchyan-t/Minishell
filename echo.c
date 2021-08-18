@@ -1,45 +1,41 @@
 #include "minishell.h"
 
-int	var_check(t_all *all, int i, int *fd)
+int	var_check(t_all *all, char **arg, int i, int *fd)
 {
 	char	*tmp;
 
-	if (all->cmd->parsed[i][0] == '$' && all->cmd->parsed[i][1] != '?')
+	if (arg[i][0] == '$' && arg[i][1] != '?')
 	{
-		tmp = ft_strdup(&all->cmd->parsed[i][1]);
+		tmp = ft_strdup(&arg[i][1]);
 		ft_putstr_fd(0, ft_getenv(all->envp, tmp), *fd);
 	}
 	return (i);
 }
 
-static int	echo_helper(t_all *all, int *fd)
+static int	echo_helper(t_all *all, char **arg, int *fd)
 {
 	int		i;
 	int		size;
 
-	i = 0;
-	if (!all->cmd->parsed[1])
+	i = 1;
+	if (!arg[1])
 	{
 		write(*fd, "\n", 1);
 		return (errno);
 	}
-	size = cmdline_size(all->cmd->parsed);
-	if (ft_strcmp(all->cmd->parsed[1], "-n") == 0)
+	size = cmdline_size(arg);
+	if (ft_strcmp(arg[1], "-n") == 0)
 		i++;
-	while(++i < size)
+	while(i < size)
 	{
-		i = var_check(all, i, fd);
-		if (all->cmd->parsed[i + 1])
-			write(*fd, " ", 1);
-		if (i < size && ft_strcmp(all->cmd->parsed[i], "$?") == 0)
-			ft_putnbr_fd(all->return_val, *fd);
-		else if (i < size && all->cmd->parsed[i][0] != '$')
-			write(*fd, all->cmd->parsed[i], ft_strlen(all->cmd->parsed[i]));
+		write(*fd, arg[i], ft_strlen(arg[i]));
+		write(*fd, " ", 1);
+		i++;
 	}
 	return (errno);
 }
 
-int	echo(t_all *all)
+int	echo(t_all *all, char **arg)
 {
 	int		fd;
 	int		ret;
@@ -50,7 +46,7 @@ int	echo(t_all *all)
 	ret = errno;
 	if (!all->redir)
 	{
-		ret = echo_helper(all, &fd);
+		ret = echo_helper(all, arg, &fd);
 	}
 	else if (all->redir->fileout)
 	{
@@ -59,9 +55,9 @@ int	echo(t_all *all)
 				(open(all->redir->fileout, O_WRONLY | O_APPEND | O_CREAT, 0644));
 		if (fd == -1)
 			perror(all->redir->fileout);
-		ret = echo_helper(all, &fd);
+		ret = echo_helper(all, arg, &fd);
 	}
-	if (ft_strcmp(all->cmd->parsed[1], "-n") != 0)
+	if (ft_strcmp(arg[1], "-n") != 0)
 		write(fd, "\n", 1);
 	return (ret);
 }

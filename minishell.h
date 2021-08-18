@@ -50,11 +50,10 @@ typedef struct s_all
 }	t_all;
 
 void		initcmds(t_commands *coms);
-void		checkquotes(char *line);
 void		initenvp(t_all *all, char **envp);
 int			execution(t_all *all);
 int			execution_pipe(t_all *all);
-int			builtin(t_all *all);
+int			builtin(t_all *all, char **arg);
 void		goodbye_msg(void);
 void		welcome_msg(void);
 void		initredirs(t_redirs *redir);
@@ -67,13 +66,13 @@ int			addbackcmd(t_cmdfinal **a, t_cmdfinal *neww);
 void		control_center(t_all *all);
 int			cmd_size(t_cmdfinal *cmd);
 int			cmdline_size(char **cmd);
-int			echo(t_all *all);
-char		**unset(t_all *all);
+int			echo(t_all *all, char **arg);
+char		**unset(t_all *all, char **arg);
 int			env_size(char **env);
-int			cd(t_all *all);
+int			cd(t_all *all, char **arg);
 int			pwd(void);
 void		print_env(t_all *all);
-char		**export_(t_all *all);
+char		**export_(t_all *all, char **arg);
 void		ft_setenv(char **envp, char *value, char *key);
 char		*ft_getenv(char **envp, char *var);
 size_t		ft_strclen(char *str, int c);
@@ -85,6 +84,10 @@ int			all_space(char *line);
 void		child_sig_handler(int sig);
 void		child_sig_handler_bash(int sig);
 char 		*trimquotes(char *str);
+int			insquotes(char const *str, int index);
+int			indquotes(char const *str, int index);
+int 		checkquotes(char *line);
+void 		checkdolar(char **str, t_all *all);
 
 
 // free functions

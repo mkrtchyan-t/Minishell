@@ -85,7 +85,7 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 			if (all->redir && all->redir->fileout)
 			{
 				if (all->redir->typefileout == 1)
-					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY, 0644);
+					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_TRUNC, 0644);
 				else
 					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_APPEND, 0644);
 				if (command->parsedpipe == NULL)

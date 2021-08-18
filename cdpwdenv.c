@@ -1,13 +1,13 @@
 #include "minishell.h"
 
-int	cd(t_all *all)
+int	cd(t_all *all, char **arg)
 {
 	char	*path;
 	char	*tmp;
 	char	pwd[1024];
 
 	ft_setenv(all->envp, "OLDPWD", getcwd(pwd, sizeof(pwd)));
-	if (all->cmd->parsed[1] == NULL)
+	if (arg[1] == NULL)
 	{
 		path = ft_getenv(all->envp, "HOME");
 		if (chdir(path) != 0)
@@ -15,13 +15,13 @@ int	cd(t_all *all)
 	}
 	else
 	{
-		if (all->cmd->parsed[1][0] == 126)
+		if (arg[1][0] == 126)
 		{
-			tmp = ft_substr(all->cmd->parsed[1], 1, ft_strlen(all->cmd->parsed[1]) - 1);
+			tmp = ft_substr(arg[1], 1, ft_strlen(arg[1]) - 1);
 			path = ft_strjoin(path, tmp);
 		}
 		else
-			path = all->cmd->parsed[1];
+			path = arg[1];
 		if (chdir(path) != 0)
 			perror(path);
 		strerror(errno);

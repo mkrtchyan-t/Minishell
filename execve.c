@@ -42,7 +42,7 @@ int	execution(t_all *all)
 		{
 			perror("error");
 		}
-		wait(0);
+		waitpid(pid, NULL, 0);
 		return (errno);
 	}
 	path = ft_split(ft_getenv(all->envp, "PATH"), ':');
@@ -77,7 +77,7 @@ int	execution(t_all *all)
 					perror("error");
 				else
 				{
-					wait(0);
+					waitpid(pid, NULL, 0);
 					res = 1;
 				}
 			}
@@ -101,7 +101,7 @@ void	control_center(t_all *all)
 {
 	if (all->cmd->parsed && !all->redir)
 	{
-		if (!builtin(all))
+		if (!builtin(all, all->cmd->parsed))
 			execution(all);
 	}
 	else if (all->cmd->parsedpipe || all->redir)

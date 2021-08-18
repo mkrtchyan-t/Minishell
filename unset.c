@@ -20,7 +20,7 @@ static char	**delete_arg(t_all *all, int i)
 	return (env);
 }
 
-char	**unset(t_all *all)
+char	**unset(t_all *all, char **arg)
 {
 	int		i;
 	char	**env;
@@ -30,7 +30,7 @@ char	**unset(t_all *all)
 	env = NULL;
 	while (all->envp[i])
 	{
-		str = ft_strjoin(all->cmd->parsed[1], "=");
+		str = ft_strjoin(arg[1], "=");
 		if (ft_strncmp(all->envp[i], str, ft_strlen(str)) == 0)
 		{
 			env = delete_arg(all, i);
