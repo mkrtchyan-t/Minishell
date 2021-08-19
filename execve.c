@@ -99,7 +99,11 @@ int	execution(t_all *all)
 
 void	control_center(t_all *all)
 {
-	if (all->cmd->parsed && !all->redir)
+	if (all->redir && all->redir->filein && all->redir->typefilein == 2)
+	{
+		heredoc(all, all->redir->filein);
+	}
+	if (all->cmd->parsed)
 	{
 		if (!builtin(all, all->cmd->parsed))
 			execution(all);

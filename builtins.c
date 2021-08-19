@@ -24,6 +24,25 @@ void	exit_(t_all *all, char **arg)
 	}
 }
 
+void	heredoc(t_all *all, char *arg)
+{
+	char	*input;
+
+	printf("arg: %s\n", arg);
+	while (1)
+	{
+		input = readline("> ");
+		if (ft_strcmp(input, arg) == 0)
+		{
+			// free(input);
+			// input = NULL;
+			free(all->redir->filein);
+			all->redir->filein = NULL;
+			return ;
+		}
+	}
+}
+
 int	builtin(t_all *all, char **arg)
 {
 	int i;
@@ -54,7 +73,6 @@ int	builtin(t_all *all, char **arg)
 		}
 		else if (ft_strcmp(arg[i], "export") == 0)
 		{
-			// ft_putstr_fd(1, "i still dont work:)", 1);
 			all->envp = export_(all, arg);
 			return (1);
 		}

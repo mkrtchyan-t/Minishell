@@ -44,19 +44,7 @@ int	echo(t_all *all, char **arg)
 	fd = 1;
 	tmp = all;
 	ret = errno;
-	if (!all->redir)
-	{
-		ret = echo_helper(all, arg, &fd);
-	}
-	else if (all->redir->fileout)
-	{
-		fd = (all->redir->typefileout == 1) ?
-				(open(all->redir->fileout, O_WRONLY | O_TRUNC | O_CREAT, 0644)) :
-				(open(all->redir->fileout, O_WRONLY | O_APPEND | O_CREAT, 0644));
-		if (fd == -1)
-			perror(all->redir->fileout);
-		ret = echo_helper(all, arg, &fd);
-	}
+	ret = echo_helper(all, arg, &fd);
 	if (ft_strcmp(arg[1], "-n") != 0)
 		write(fd, "\n", 1);
 	return (ret);

@@ -105,7 +105,8 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		pid = fork();
 		if (pid == 0)
 		{
-			ft_execve(all, command, fdout, tmpout);
+			if (!(builtin(all, command->parsedpipe)))
+				ft_execve(all, command, fdout, tmpout);
 		}
 		command = command->next;
 	}

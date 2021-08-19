@@ -32,9 +32,6 @@ GREEN		= \033[0;32m
 RED			= \033[0;31m
 RESET		= \033[0;0m
 
-# .c.o:
-# 		@gcc -Wall -Wextra -Werror -c $< -o ${<:.c=.o}
-
 all: ${LIBFT} ${NAME}
 
 ${LIBFT}:
