@@ -5,14 +5,12 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 	// printf("ft execve\n");
 	char	**path;
 	int		i;
-	int		res;
 	int		len;
 	DIR		*dir;
 	struct	dirent *dp;
 	char	*newname;
 
 	i = 0;
-	res = 0;
 	if(command->parsedpipe[0][0] == '/')
 	{
 		newname = command->parsedpipe[0];
@@ -21,7 +19,6 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 		{
 			perror(newname);
 		}
-		wait(0);
 		return (errno);
 	}
 	path = ft_split(getenv("PATH"), ':');
@@ -43,12 +40,10 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 		}
 		i++;
 	}
-	if (res == 0)
-	{
-		ft_putstr_fd(0, "sh: ", tmpout);
-		ft_putstr_fd(0, all->cmd->parsed[0], tmpout);
-		ft_putstr_fd(1, ": command not found", tmpout);
-	}
+	ft_putstr_fd(0, "sh: ", tmpout);
+	ft_putstr_fd(0, command->parsedpipe[0], tmpout);
+	ft_putstr_fd(1, ": command not found", tmpout);
+	exit(127);
 	free(path);
 	closedir(dir);
 	return (1);
@@ -62,6 +57,7 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 	int  	fdout;
 	int  	fdin;
 	pid_t	pid;
+	int  	status;
 
 	tmpin = dup(0);
 	tmpout = dup(1);
@@ -106,13 +102,16 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		if (pid == 0)
 		{
 			if (!(builtin(all, command->parsedpipe)))
+			{
 				ft_execve(all, command, fdout, tmpout);
+			}
 		}
 		command = command->next;
-	}
+	} 
 	dup2(tmpin, 0);
 	dup2(tmpout, 1);
 	close(tmpin);
 	close(tmpout);
-	waitpid(pid, NULL, 0);
+	waitpid(pid, &status, 0);
+	all->return_val = WEXITSTATUS(status);
 }

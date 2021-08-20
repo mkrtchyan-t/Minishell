@@ -181,7 +181,7 @@ char *replacestr(char *str, int start, int end, t_all *all)
 		i++;
 	}
 	tmp1 = ft_substr(str, 0, start - 1);
-	tmp2 = ft_substr(str, end, ft_strlen(str));
+	tmp2 = ft_substr(str, end + 1, ft_strlen(str));
 	if (ft_getenv(all->envp, varname) != NULL)
 		replaced = ft_strjoin(ft_strjoin(tmp1, ft_getenv(all->envp, varname)), tmp2);
 	else
@@ -210,7 +210,9 @@ void checkdolar(char **str, t_all *all)
 				start = j + 1;
 				while (str[i][j] && str[i][j] != ' ')
 					j++;
-				end = j;
+				end = j - 1;
+				if (str[i][end] == '"')
+					end--;
 				tmp = str[i];
 				str[i] = ft_strdup(replacestr(str[i], start, \
 							end, all));

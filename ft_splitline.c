@@ -56,7 +56,7 @@ int	insquotes(char const *str, int index)
 	return (0);
 }
 
-static int	inquotes(char const *str, int index)
+int	inquotes(char const *str, int index)
 {
 	int start;
 	int last;

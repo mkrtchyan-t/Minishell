@@ -103,7 +103,9 @@ void	control_center(t_all *all)
 	{
 		heredoc(all, all->redir->filein);
 	}
-	if (all->cmd->parsed)
+	if ((all->cmd->parsed && !all->redir) || (all->cmd->parsed && \
+		all->redir && all->redir->filein && \
+		all->redir->typefilein == 2 && !all->redir->fileout))
 	{
 		if (!builtin(all, all->cmd->parsed))
 			execution(all);

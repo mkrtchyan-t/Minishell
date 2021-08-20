@@ -28,16 +28,13 @@ void	heredoc(t_all *all, char *arg)
 {
 	char	*input;
 
-	printf("arg: %s\n", arg);
 	while (1)
 	{
 		input = readline("> ");
 		if (ft_strcmp(input, arg) == 0)
 		{
-			// free(input);
-			// input = NULL;
-			free(all->redir->filein);
-			all->redir->filein = NULL;
+			free(input);
+			input = NULL;
 			return ;
 		}
 	}

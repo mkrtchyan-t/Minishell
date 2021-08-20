@@ -19,8 +19,8 @@ void 	checkredirsout(t_redirs **redir, char *line)
 	while (line[i] != '\0')
 	{
 		type = ((line[i] == '>' && line[i + 1] == '>') ? 2: 0);
-		if ((line[i] == '>' && line[i + 1] == '>') || \
-			(line[i] == '>' && line[i + 1] != '>'))
+		if (((line[i] == '>' && line[i + 1] == '>') || \
+			(line[i] == '>' && line[i + 1] != '>')) && !inquotes(line, i))
 		{
 			new = (t_redirs *)malloc(sizeof(t_redirs));
 			initredirs(new);
@@ -62,8 +62,8 @@ void 	checkredirsin(t_redirs **redir, char *line)
 	while (line[i] != '\0')
 	{	
 		type = (line[i] == '<' && line[i + 1] == '<') ? 2: 0;
-		if ((line[i] == '<' && line[i + 1] == '<') || \
-			(line[i] == '<' && line[i + 1] != '<'))
+		if (((line[i] == '<' && line[i + 1] == '<') || \
+			(line[i] == '<' && line[i + 1] != '<')) && !inquotes(line, i))
 		{
 			new = (t_redirs *)malloc(sizeof(t_redirs));
 			initredirs(new);
@@ -100,34 +100,28 @@ void 	checkredirsin(t_redirs **redir, char *line)
 	}
 }
 
-int	checkmalloc(char **str)
+static 	int inquote(char *str)
 {
-	int 	i;
-	int 	j;
+	int i;
 
-	j = 0;
 	i = 0;
 	while (str[i])
 	{
-		if ((str[i][0] == '<' && str[i][1] == '<') \
-			|| (str[i][0] == '>' && str[i][1] == '>') ||
-			(str[i][0] == '<' && str[i][1] != '<') \
-			|| (str[i][0] == '>' && str[i][1] != '>'))
-		{
-			i += 2;
-		}
-		else if ((ft_strcmp(str[i], ">") == 0) || (ft_strcmp(str[i], ">>") == 0)\
-			|| ft_strcmp(str[i], "<") == 0 || ft_strcmp(str[i], "<<") == 0)
-		{
-			i++;
-		}
-		else
-		{
-			j++;
-			i++;
-		}
+		if (!inquotes(str, i))
+			return (0);
+		i++;
 	}
-	return (j);
+	return (1);
+}
+
+int	checkmalloc(char **str, t_all *all)
+{
+	int 	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
 }
 
 char	**checkcommand(t_all *all, char **str)
@@ -137,33 +131,44 @@ char	**checkcommand(t_all *all, char **str)
 	int 	len;
 	int 	j;
 	int  	done;
+	int  	start;
+	char  	*st;
 
 	j = 0;
 	i = 0;
 	done = 0;
-	len = checkmalloc(str);
+	start = 0;
+	len = checkmalloc(str, all);
 	cmd = malloc(sizeof(char *) * (len + 1));
 	i = 0;
 	while (str[i])
 	{
-		if ((ft_strcmp(str[i], ">") == 0) || (ft_strcmp(str[i], ">>") == 0)\
-			|| ft_strcmp(str[i], "<") == 0 || ft_strcmp(str[i], "<<") == 0)
+		start = 0;
+		st = ft_strdup("");
+		while (str[i][start] && (str[i][start] != '>' && str[i][start] != '<'))
 		{
-			i += 2;
+			st[start] = str[i][start];
+			start++;
 		}
-		else if ((str[i][0] == '<' && str[i][1] == '<') \
-			|| (str[i][0] == '>' && str[i][1] == '>') ||
-			(str[i][0] == '<' && str[i][1] != '<') \
-			|| (str[i][0] == '>' && str[i][1] != '>'))
+		if (((ft_strcmp(str[i], ">") == 0) || (ft_strcmp(str[i], ">>") == 0)\
+			|| ft_strcmp(str[i], "<") == 0 || ft_strcmp(str[i], "<<") == 0) && !inquote(str[i]) && \
+			str[i + 1])
+		{
+				i += 2;
+		}
+		else if (((str[i][start] == '<' && str[i][start + 1] == '<') \
+			|| (str[i][start] == '>' && str[i][start + 1] == '>') ||
+			(str[i][start] == '<' && str[i][start + 1] != '<') \
+			|| (str[i][start] == '>' && str[i][start + 1] != '>')) && !inquotes(str[i], start))
 		{
 			i++;
 		}
 		else
+			i++;
+		if (st[0] != '\0')
 		{
 			done = 1;
-			cmd[j] = ft_strdup(str[i]);
-			j++;
-			i++;
+			cmd[j++] = trimquotes(st);
 		}
 	}
 	cmd[j] = NULL;
@@ -183,7 +188,7 @@ void 	checkredirs(char *line, t_all *all)
 	new = malloc(sizeof(t_cmdfinal));
 	initfinal(new);
 	i = 0;
-	str = ft_split(line, '|');
+	str = ft_splitline(line, '|');
 	all->redir = NULL;
 	while (str[i] != NULL)
 	{	

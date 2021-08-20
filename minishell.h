@@ -89,7 +89,8 @@ int			indquotes(char const *str, int index);
 int 		checkquotes(char *line);
 void 		checkdolar(char **str, t_all *all);
 char		**checkcommand(t_all *all, char **str);
-void	heredoc(t_all *all, char *arg);
+void		heredoc(t_all *all, char *arg);
+int			inquotes(char const *str, int index);
 
 // free functions
 void		free_envp(char **envp);

@@ -34,14 +34,7 @@ void	parsespace(char *firstpart, char ***parsed, t_all *all)
 	while (str[i] != NULL)
 		i++;
 	checkdolar(str, all);
-	*parsed = (char **)malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (str[i] != NULL)
-	{
-		(*parsed)[i] = trimquotes(str[i]);
-		i++;
-	}
-	(*parsed)[i] = NULL;
+	*parsed = str;
 }
 
 int	processline(char *line, t_all *all)
@@ -85,7 +78,7 @@ int	processline(char *line, t_all *all)
 	checkredirs(line, all);
 	//for executing without pipe and
 	//with pipe use
-	/*if (!all->cmd->parsed)
+	/*if (!all->cmd->parsed && all->cmd->parsedpipe)
 	{
 		while (all->cmd)
 	 	{
@@ -99,7 +92,7 @@ int	processline(char *line, t_all *all)
 	 		printf("\n");
 	 	}
 	 }
-	 else
+	else if (all->cmd->parsed)
 	 {
 		 while (all->cmd)
 		 {
