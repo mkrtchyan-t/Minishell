@@ -122,14 +122,25 @@ int	processline(char *line, t_all *all)
 
 static void	sig_handler(int sig)
 {
-	if (sig == SIGINT)
+	if (sig == SIGINT && !g_glob.forked)
+	{
+		write(1, "\r", 1);
+		rl_on_new_line();
+		rl_redisplay();
+		ft_putstr_fd(0, "  \b\b", 1);
+	}
+	if (sig == SIGINT && !g_glob.forked)
 	{
 		rl_replace_line("", 0);
 		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_redisplay();
-		// ft_putstr_fd(0, "\033[12C\033[0K\n", 1);
-		// ft_putstr_fd(0, "\r\033[1;34mminishell\033[0;0m$> ", 1);
+		*(g_glob.ret) = 1;
+	}
+	else if (sig == SIGINT && g_glob.forked)
+	{
+		write(1, "\n", 1);
+		*(g_glob.ret) = 130;
 	}
 }
 
@@ -152,9 +163,11 @@ int	main(int args, char **argv, char **envp)
 	initcmds(all.coms);
 	initenvp(&all, envp);
 	signal(SIGQUIT, SIG_IGN);
+	g_glob.ret = &(all.return_val);
 	// welcome_msg();
 	while (1)
 	{
+		g_glob.forked = 0;
 		signal(SIGINT, sig_handler);
 		input = takeinput(&line);
 		if (input == 1)

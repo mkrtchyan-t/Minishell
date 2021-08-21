@@ -2,7 +2,6 @@
 
 int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 {
-	// printf("ft execve\n");
 	char	**path;
 	int		i;
 	int		len;
@@ -43,10 +42,9 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 	ft_putstr_fd(0, "sh: ", tmpout);
 	ft_putstr_fd(0, command->parsedpipe[0], tmpout);
 	ft_putstr_fd(1, ": command not found", tmpout);
-	exit(127);
 	free(path);
 	closedir(dir);
-	return (1);
+	exit(127);
 }
 
 void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
@@ -101,10 +99,10 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		pid = fork();
 		if (pid == 0)
 		{
-			if (!(builtin(all, command->parsedpipe)))
-			{
+			if ((builtin(all, command->parsedpipe)))
+				exit(0);
+			else
 				ft_execve(all, command, fdout, tmpout);
-			}
 		}
 		command = command->next;
 	} 
@@ -112,6 +110,8 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 	dup2(tmpout, 1);
 	close(tmpin);
 	close(tmpout);
+	g_glob.forked = 1;
 	waitpid(pid, &status, 0);
+	g_glob.forked = 0;
 	all->return_val = WEXITSTATUS(status);
 }

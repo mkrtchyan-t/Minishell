@@ -13,7 +13,15 @@
 # include <dirent.h>
 # include <errno.h>
 # include <termios.h>
-# include <fcntl.h> 
+# include <fcntl.h>
+
+typedef struct s_glob
+{
+	int forked;
+	int *ret;
+}				t_glob;
+
+t_glob g_glob;
 
 typedef struct s_commands
 {

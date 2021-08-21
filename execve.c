@@ -42,7 +42,9 @@ int	execution(t_all *all)
 		{
 			perror("error");
 		}
+		g_glob.forked = 1;
 		waitpid(pid, NULL, 0);
+		g_glob.forked = 0;
 		return (errno);
 	}
 	path = ft_split(ft_getenv(all->envp, "PATH"), ':');
@@ -77,7 +79,9 @@ int	execution(t_all *all)
 					perror("error");
 				else
 				{
+					g_glob.forked = 1;
 					waitpid(pid, NULL, 0);
+					g_glob.forked = 0;
 					res = 1;
 				}
 			}
@@ -93,7 +97,6 @@ int	execution(t_all *all)
 	}
 	free(path);
 	closedir(dir);
-	// all->return_val = errno;
 	return (1);
 }
 
