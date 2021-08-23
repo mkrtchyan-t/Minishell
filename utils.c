@@ -51,3 +51,20 @@ int	cmdline_size(char **cmd)
 		i++;
 	return (i);
 }
+
+char *join(char *f, char c)
+{
+	char 	*joined;
+	int 	i;
+
+	i = 0;
+	joined = (char *)malloc(sizeof(char) * (ft_strlen(f) + 2));
+	while (f[i] != '\0')
+	{
+		joined[i] = f[i];
+		i++;
+	}
+	joined[i] = c;
+	joined[i + 1] = '\0';
+	return(joined);
+}

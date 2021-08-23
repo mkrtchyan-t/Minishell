@@ -1,5 +1,17 @@
 #include "minishell.h"
 
+char	*get_cmdpipe(t_cmdfinal *com)
+{
+	int		i;
+	char	**command;
+
+	command = ft_split(com->parsedpipe[0], '/');
+	i = 0;
+	while (command[i + 1])
+		i++;
+	return (command[i]);
+}
+
 int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 {
 	char	**path;
@@ -13,7 +25,7 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 	if(command->parsedpipe[0][0] == '/')
 	{
 		newname = command->parsedpipe[0];
-		command->parsedpipe[0] = get_cmd(all);
+		command->parsedpipe[0] = get_cmdpipe(command);
 		if ((execve(newname, command->parsedpipe, NULL)) != 0) //executes the command
 		{
 			perror(newname);

@@ -4,59 +4,70 @@ char	*get_cmd(t_all *all)
 {
 	int		i;
 	char	**command;
+	char 	*var;
 
 	command = ft_split(all->cmd->parsed[0], '/');
 	i = 0;
 	while (command[i + 1])
 		i++;
-	return (command[i]);
+	var = ft_strdup(command[i]);
+	freestrpiped(command);
+	return (var);
+}
+
+int execdrop(t_all *all)
+{
+	int		pid;
+	char	*newname;
+	int 	status;
+
+	newname = all->cmd->parsed[0];
+	all->cmd->parsed[0] = get_cmd(all);
+	pid = fork();
+	if (pid == 0)
+	{
+		if ((execve(newname, all->cmd->parsed, NULL)) != 0) //executes the command
+		{
+			ft_error(newname, all);
+			exit(errno);
+		}
+	}
+	else if (pid < 0)
+		ft_error("error", all);
+	g_glob.forked = 1;
+	waitpid(pid, &status, 0);
+	all->return_val = WEXITSTATUS(status);
+	free(newname);
+	g_glob.forked = 0;
+	return (1);
 }
 
 int	execution(t_all *all)
 {
 	char	**path;
 	int		i;
-	int		res;
+	int		res[2];
 	int		len;
 	DIR		*dir;
 	int		pid;
 	struct	dirent *dp;
-	char	*newname;
+	char	*newname[2];
 
 	i = 0;
-	res = 0;
-
+	res[0] = 0;
 	if(all->cmd->parsed[0][0] == '/')
 	{
-		newname = all->cmd->parsed[0];
-		all->cmd->parsed[0] = get_cmd(all);
-		pid = fork();
-		if (pid == 0)
-		{
-			if ((execve(newname, all->cmd->parsed, NULL)) != 0) //executes the command
-			{
-				perror(newname);
-			}
-		}
-		else if (pid < 0)
-		{
-			perror("error");
-		}
-		g_glob.forked = 1;
-		waitpid(pid, NULL, 0);
-		g_glob.forked = 0;
-		return (errno);
+		execdrop(all);
+		return (1);
 	}
-	path = ft_split(ft_getenv(all->envp, "PATH"), ':');
+	newname[0] = ft_getenv(all->envp, "PATH");
+	path = ft_split(newname[0], ':');
 	if (!path)
 	{
-		ft_putstr_fd(0, "sh: ", 1);
-		ft_putstr_fd(0, all->cmd->parsed[0], 1);
-		ft_putstr_fd(1, ": No such file or directory", 1);
-		all->return_val = 127;
+		ft_simplerror(all->cmd->parsed[0], all);
 		return (0);
 	}
-	newname = ft_strjoin("/", all->cmd->parsed[0]);
+	newname[1] = ft_strjoin("/", all->cmd->parsed[0]);
 	while (path[i])
 	{
 		if (!(dir = opendir(path[i])))
@@ -69,34 +80,42 @@ int	execution(t_all *all)
 				pid = fork();
 				if (pid == 0)
 				{
-					if ((execve(ft_strjoin(path[i], newname), all->cmd->parsed, NULL)) == -1) //executes the command
+					if ((execve(ft_strjoin(path[i], newname[1]), all->cmd->parsed, NULL)) == -1) //executes the command
 					{
-						printf("errno: %d\n", errno);
-						perror(all->cmd->parsed[0]);
+						ft_error(all->cmd->parsed[0], all);
+						exit(errno);
 					}
 				}
 				else if (pid < 0)
-					perror("error");
+				{
+					ft_error(all->cmd->parsed[0], all);
+				}
 				else
 				{
 					g_glob.forked = 1;
-					waitpid(pid, NULL, 0);
+					waitpid(pid, &res[1], 0);
+					all->return_val = WEXITSTATUS(res[1]);
+					free(newname[1]);
 					g_glob.forked = 0;
-					res = 1;
+					res[0] = 1;
 				}
 			}
 		}
+		if (dir)
+			closedir(dir);
 		i++;
 	}
-	if (res == 0)
+	if (res[0] == 0)
 	{
-		ft_putstr_fd(0, "sh: ", 1);
-		ft_putstr_fd(0, all->cmd->parsed[0], 1);
-		ft_putstr_fd(1, ": command not found", 1);
+		if (newname[1])
+			free(newname[1]);
+		ft_putstr_fd(0, "sh: ", 2);
+		ft_putstr_fd(0, all->cmd->parsed[0], 2);
+		ft_putstr_fd(1, ": command not found", 2);
 		all->return_val = 127;
 	}
-	free(path);
-	closedir(dir);
+	freestrpiped(path);
+	free(newname[0]);
 	return (1);
 }
 

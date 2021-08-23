@@ -5,13 +5,17 @@ int	cd(t_all *all, char **arg)
 	char	*path;
 	char	*tmp;
 	char	pwd[1024];
+	char  	*dir[2];
 
-	ft_setenv(all->envp, "OLDPWD", getcwd(pwd, sizeof(pwd)));
+	dir[0] = getcwd(pwd, sizeof(pwd));
+	ft_setenv(all->envp, "OLDPWD", dir[0]);
 	if (arg[1] == NULL)
 	{
 		path = ft_getenv(all->envp, "HOME");
 		if (chdir(path) != 0)
 			ft_putstr_fd(1, "sh: cd: HOME not set", 1);
+		if (path)
+			free(path);
 	}
 	else
 	{
@@ -24,10 +28,19 @@ int	cd(t_all *all, char **arg)
 			path = arg[1];
 		if (chdir(path) != 0)
 			perror(path);
-		strerror(errno);
+		if (arg[1][0] == 126)
+		{
+			if (path)
+				free(path);
+			free(tmp);
+		}
 	}
-	ft_setenv(all->envp, "PWD", getcwd(pwd, sizeof(pwd)));
-	printf("errno: %d\n", errno);
+	dir[1] = getcwd(pwd, sizeof(pwd));
+	ft_setenv(all->envp, "PWD", dir[1]);
+	/*if (dir[0])
+		free(dir[0]);
+	if (dir[1])
+		free(dir[1]);*/
 	return (errno);
 }
 

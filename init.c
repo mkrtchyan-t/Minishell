@@ -34,6 +34,7 @@ char 	**copy_env(char **envp)
 		cpy[i] = ft_strdup(envp[i]);
 		i++;
 	}
+	cpy[i] = NULL;
 	return (cpy);
 }
 

@@ -16,7 +16,8 @@ SRCS =	init.c \
 		free.c \
 		utils3.c \
 		pipe.c \
-		ft_splitline.c
+		ft_splitline.c \
+		error.c \
 
 LIBFT		= ./libft/libft.a
 

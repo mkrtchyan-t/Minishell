@@ -45,7 +45,8 @@ int	echo(t_all *all, char **arg)
 	tmp = all;
 	ret = errno;
 	ret = echo_helper(all, arg, &fd);
-	if (ft_strcmp(arg[1], "-n") != 0)
-		write(fd, "\n", 1);
+	if (arg[1])
+		if (ft_strcmp(arg[1], "-n") != 0)
+			write(fd, "\n", 1);
 	return (ret);
 }

@@ -99,6 +99,14 @@ void 		checkdolar(char **str, t_all *all);
 char		**checkcommand(t_all *all, char **str);
 void		heredoc(t_all *all, char *arg);
 int			inquotes(char const *str, int index);
+char 		*join(char *f, char c);
+void 		freecoms(t_all *all);
+void 		freestrpiped(char **strpiped);
+void 		freecmds(t_all *all);
+void 		ft_error(char *str, t_all *all);
+void 		ft_simplerror(char *str, t_all *all);
+char 		**copy_env(char **envp);
+void 		freeredir(t_all *all);
 
 // free functions
 void		free_envp(char **envp);

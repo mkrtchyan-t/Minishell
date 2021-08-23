@@ -32,6 +32,7 @@ char	*ft_getenv(char **envp ,char *var)
 		}
 		i++;
 	}
+	free(var);
 	if (i == size && !path)
 		return (NULL);
 	return (path);

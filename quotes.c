@@ -30,97 +30,29 @@ int 	checkquotes(char *line)
 	return (1);
 }
 
-int  	space(char *str)
-{
-	int 	i;
-	int 	j;
-	char 	*trimed;
-
-	j = 0;
-	i = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] == '\"')
-		{
-			i++;
-			while (str[i] != '\"')
-			{
-				i++;
-				j++;
-			}
-		}
-		else if (str[i] == '\'')
-		{
-			i++;
-			while (str[i] != '\'')
-			{
-				i++;
-				j++;
-			}
-		}
-			else if ((str[i] == '\\' && !insquotes(str, i)) &&\
-				 (str[i + 1] == '\\' || str[i + 1] == '"' ||\
-				  str[i + 1] == '$'))
-		{
-			i++;
-		}
-		else if ((str[i] == '\\' && !insquotes(str, i) && !indquotes(str, i)) &&\
-				 str[i + 1] == '\'')
-		{
-			i++;
-		}
-		j++;
-		i++;
-	}
-	return (j);
-}
-
 char 	*trimquotes(char *str)
 {
 	int 	i;
 	int 	j;
 	char 	*trimed;
-	int 	size;
 
-	size = space(str);
-	trimed = (char *)malloc(sizeof(char) * (size + 1));
+	trimed = (char *)malloc(sizeof(char) * (ft_strlen(str) + 1));
 	j = 0;
-	i = 0;
-	while (str[i] != '\0')
+	i = -1;
+	while (str[++i] != '\0')
 	{
 		if (str[i] == '\"')
-		{
-			i++;
-			while (str[i] != '\"')
-			{
-				trimed[j++] = str[i];
-				i++;
-			}
-			i++;
-		}
+			continue ;
 		else if (str[i] == '\'')
-		{
-			i++;
-			while (str[i] != '\'')
-			{
-				trimed[j++] = str[i];
-				i++;
-			}
-			i++;
-		}
+			continue ;
 		else if ((str[i] == '\\' && !insquotes(str, i)) &&\
 				 (str[i + 1] == '\\' || str[i + 1] == '"' ||\
 				  str[i + 1] == '$'))
-		{
-			i++;
-		}
+			continue ;
 		else if ((str[i] == '\\' && !insquotes(str, i) && !indquotes(str, i)) &&\
 				 str[i + 1] == '\'')
-		{
-			i++;
-		}
+			continue ;
 		trimed[j++] = str[i];
-		i++;
 	}
 	trimed[j] = '\0';
 	return (trimed);
@@ -146,27 +78,28 @@ int getsiz(char *str, int start, int end)
 
 char *replacequest(char *str, int start, int end, t_all *all)
 {
-	char *tmp1;
+	char *tmp[3];
 	char *tmp2;
 	char *varname;
-	int i;
-	int j;
 	char *replaced;
 
-	varname = ft_strdup(ft_itoa(all->return_val));
-	tmp1 = ft_substr(str, 0, start - 1);
-	tmp2 = ft_substr(str, end, ft_strlen(str));
-	replaced = ft_strjoin(ft_strjoin(tmp1, varname), tmp2);
-	free(tmp1);
-	free(tmp2);
+	varname = ft_itoa(all->return_val);
+	tmp[0] = ft_substr(str, 0, start - 1);
+	tmp[1] = ft_substr(str, end, ft_strlen(str));
+	tmp[2] = ft_strjoin(tmp[0], varname);
+	replaced = ft_strjoin(tmp[2], tmp[1]);
+	free(tmp[0]);
+	free(tmp[1]);
+	free(tmp[2]);
+	free(varname);
 	return (replaced);
 }
 
 char *replacestr(char *str, int start, int end, t_all *all)
 {
-	char *tmp1;
-	char *tmp2;
+	char *tmp[3];
 	char *varname;
+	char *path;
 	int i;
 	int j;
 	char *replaced;
@@ -180,14 +113,22 @@ char *replacestr(char *str, int start, int end, t_all *all)
 			varname[j++] = str[i];
 		i++;
 	}
-	tmp1 = ft_substr(str, 0, start - 1);
-	tmp2 = ft_substr(str, end + 1, ft_strlen(str));
-	if (ft_getenv(all->envp, varname) != NULL)
-		replaced = ft_strjoin(ft_strjoin(tmp1, ft_getenv(all->envp, varname)), tmp2);
+	tmp[0] = ft_substr(str, 0, start - 1);
+	tmp[1] = ft_substr(str, end + 1, ft_strlen(str));
+	path = ft_getenv(all->envp, varname);
+	if (path)
+		tmp[2] = ft_strjoin(tmp[0], path);
+	if (path != NULL)
+		replaced = ft_strjoin(tmp[2], tmp[1]);
 	else
-		replaced = ft_strjoin(tmp1, tmp2);
-	free(tmp1);
-	free(tmp2);
+		replaced = ft_strjoin(tmp[0], tmp[1]);
+	if (path)
+		free(path);
+	free(tmp[0]);
+	free(tmp[1]);
+	if (path)
+		free(tmp[2]);
+	free(varname);
 	return (replaced);
 }
 
@@ -214,8 +155,8 @@ void checkdolar(char **str, t_all *all)
 				if (str[i][end] == '"')
 					end--;
 				tmp = str[i];
-				str[i] = ft_strdup(replacestr(str[i], start, \
-							end, all));
+				str[i] = replacestr(str[i], start, \
+							end, all);
 				free(tmp);
 			}
 			else if (str[i][j] == '$' && str[i][j + 1] == '?' && !insquotes(str[i], j))
@@ -223,8 +164,8 @@ void checkdolar(char **str, t_all *all)
 				start = j + 1;
 				end = j + 2;
 				tmp = str[i];
-				str[i] = ft_strdup(replacequest(str[i], start, \
-							end, all));
+				str[i] = replacequest(str[i], start, \
+							end, all);
 				free(tmp);
 			}
 			else if (str[i][j] == '\\')

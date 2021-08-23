@@ -38,7 +38,7 @@ char	**unset(t_all *all, char **arg)
 	int		j;
 	int		size;
 	char	**env;
-	char	*str;
+	char	**tmp;
 
 	j = 0;
 	env = all->envp;
@@ -51,7 +51,9 @@ char	**unset(t_all *all, char **arg)
 			if (ft_strncmp(env[i], arg[j], size) == 0 &&
 				(env[i][size] == '=' || !env[i][size + 1]))
 			{
+				tmp = env;
 				env = delete_arg(env, i);
+				freestrpiped(tmp);
 				break ;
 			}
 			i++;

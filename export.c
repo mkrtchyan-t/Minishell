@@ -30,6 +30,7 @@ void	export_env(char **envp)
 			ft_putstr_fd(0, "\"", 1);
 		}
 		write(1, "\n", 1);
+		freestrpiped(splitted);
 		i++;
 	}
 }
@@ -70,7 +71,7 @@ char	**export_(t_all *all, char **arg)
 	int		i;
 	int		j;
 	int		done;
-	int		var_size;
+	char	**tmp;
 	int		size;
 	char	**env;
 	char	**envp;
@@ -80,8 +81,12 @@ char	**export_(t_all *all, char **arg)
 		export_env(all->envp);
 		return (all->envp);
 	}
-	j = 0;
 	envp = all->envp;
+	j = 0;
+	while (arg[j])
+		j++;
+	size = j;
+	j = 0;
 	env = (char **)malloc(sizeof(char *) * (space(all, arg) + 1));
 	while (arg[++j])
 	{
@@ -110,7 +115,16 @@ char	**export_(t_all *all, char **arg)
 		}
 		else
 			env[i] = NULL;
-		envp = env;
+		tmp = envp;
+		envp = copy_env(env);
+		freestrpiped(tmp);
+		if (j != size - 1)
+		{
+			i = 0;
+			while (env[i])
+				free(env[i++]);
+		}
 	}
+	freestrpiped(envp);
 	return (env);
 }

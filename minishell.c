@@ -4,15 +4,17 @@ int	takeinput(char **line)
 {
 	char *buf;
 
-	buf = readline("\033[1;34mminishell\033[0;0m$> ");
+	buf = readline("minishell$> ");
 	if (buf && ft_strlen(buf) != 0)
 	{
 		add_history(buf);
 		*line = ft_strdup(buf);
+		free(buf);
 		return (0);
 	}
 	else if (buf == NULL)
 		return (2);
+	free(buf);
 	return (1);
 }
 
@@ -42,42 +44,47 @@ int	processline(char *line, t_all *all)
 	char 		**strpiped;
 	int 		i;
 	t_commands 	*new;
+	int  		piped;
 
 	i = 0;
 	new = NULL;
 	all->coms = NULL;
-	new = malloc(sizeof(t_commands));
 	if (!checkquotes(line))
 	{
 		ft_putstr_fd(1, "unclosed quotes", 1);
 		return (0);
 	}
-	initcmds(new);
+	piped = 0;
 	strpiped = NULL;
 	strpiped = parsepipe(line);
 	if (strpiped[1] != NULL)
-		new->piped = 1;
-	if (new->piped)
+		piped = 1;
+	if (piped)
 	{	
 		i = 0;
 		while (strpiped[i])
 		{
-			parsespace(strpiped[i], &new->parsedpipe, all);
-			addbackcom(&all->coms, new);
 			new = malloc(sizeof(t_commands));
 			initcmds(new);
 			new->piped = 1;
+			parsespace(strpiped[i], &new->parsedpipe, all);
+			addbackcom(&all->coms, new);
 			i++;
 		}
 	}
 	else
 	{
+		new = malloc(sizeof(t_commands));
+		initcmds(new);
 		parsespace(line, &new->parsed, all);
 		addbackcom(&all->coms, new);
 	}
+	freestrpiped(strpiped);
 	checkredirs(line, all);
+	freecoms(all);
 	//for executing without pipe and
 	//with pipe use
+	//printf("%p", all->cmd);
 	/*if (!all->cmd->parsed && all->cmd->parsedpipe)
 	{
 		while (all->cmd)
@@ -88,6 +95,7 @@ int	processline(char *line, t_all *all)
 				printf("%s\n", all->cmd->parsedpipe[i]);
 	 			i++;
 	 		}
+	 		printf("%p", all->cmd);
 	 		all->cmd = all->cmd->next;
 	 		printf("\n");
 	 	}
@@ -106,6 +114,7 @@ int	processline(char *line, t_all *all)
 		 	printf("\n");
 		 }
 	 }*/
+	 //freecmds(all);
 	/* all->cmd = all->cmd->next;
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
 		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe
@@ -157,14 +166,9 @@ int	main(int args, char **argv, char **envp)
 		return (0);
 	}
 	line = NULL;
-	all.coms = (t_commands *)malloc(sizeof(t_commands));
-	if (!all.coms)
-		exit(1);
-	initcmds(all.coms);
-	initenvp(&all, envp);
 	signal(SIGQUIT, SIG_IGN);
 	g_glob.ret = &(all.return_val);
-	// welcome_msg();
+	initenvp(&all, envp);
 	while (1)
 	{
 		g_glob.forked = 0;
@@ -177,10 +181,19 @@ int	main(int args, char **argv, char **envp)
 		if (!all_space(line))
 		{
 			if (!processline(line, &all))
+			{
+				free(line);
 				continue ;
+			}
 		}
 		else
+		{
+			free(line);
 			continue ;
+		}
 		control_center(&all);
+		free(line);
+		freecmds(&all);
+		freeredir(&all);
 	}
 }
