@@ -146,7 +146,16 @@ void checkdolar(char **str, t_all *all)
 		j = 0;
 		while (str[i][j] != '\0')
 		{
-			if (str[i][j] == '$' && str[i][j + 1] != '?' && !insquotes(str[i], j))
+			if (str[i][j] == '$' && (!str[i][j + 1] || str[i][j + 1] == '\\' || str[i][j + 1] == '/'))
+			{
+				if (str[i][j + 1] == '\\')
+				{
+					tmp = str[i];
+					str[i] = ft_strdup("$");
+					free(tmp);
+				}
+			}
+			else if (str[i][j] == '$' && str[i][j + 1] != '?' && !insquotes(str[i], j))
 			{
 				start = j + 1;
 				while (str[i][j] && str[i][j] != ' ')

@@ -2,16 +2,25 @@
 
 void	ft_setenv(char **envp, char *value, char *key)
 {
-	int	i;
+	int		i;
+	char	*line;
+	char  	*tmp;
 
 	i = 0;
 	value = ft_strjoin(value, "=");
 	while (envp[i])
 	{
 		if (ft_strncmp(envp[i], value, ft_strlen(value)) == 0)
-			envp[i] = ft_strdup(ft_strjoin(value, key));
+		{
+			line = ft_strjoin(value, key);
+			tmp = envp[i];
+			envp[i] = ft_strdup(line);
+			free(tmp);
+			free(line);
+		}
 		i++;
 	}
+	free(value);
 }
 
 char	*ft_getenv(char **envp ,char *var)

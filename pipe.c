@@ -4,12 +4,15 @@ char	*get_cmdpipe(t_cmdfinal *com)
 {
 	int		i;
 	char	**command;
+	char 	*var;
 
 	command = ft_split(com->parsedpipe[0], '/');
 	i = 0;
 	while (command[i + 1])
 		i++;
-	return (command[i]);
+	var = ft_strdup(command[i]);
+	freestrpiped(command);
+	return (var);
 }
 
 int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
@@ -19,21 +22,28 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 	int		len;
 	DIR		*dir;
 	struct	dirent *dp;
-	char	*newname;
+	char	*newname[3];
 
 	i = 0;
 	if(command->parsedpipe[0][0] == '/')
 	{
-		newname = command->parsedpipe[0];
+		newname[0] = command->parsedpipe[0];
 		command->parsedpipe[0] = get_cmdpipe(command);
-		if ((execve(newname, command->parsedpipe, NULL)) != 0) //executes the command
+		if ((execve(newname[0], command->parsedpipe, NULL)) != 0) //executes the command
 		{
-			perror(newname);
+			ft_error(newname[0], all);
+			free(newname[0]);
+			exit(127);
 		}
-		return (errno);
 	}
-	path = ft_split(getenv("PATH"), ':');
-	newname = ft_strjoin("/", command->parsedpipe[0]);
+	newname[2] = ft_getenv(all->envp, "PATH");
+	path = ft_split(newname[2], ':');
+	newname[1] = ft_strjoin("/", command->parsedpipe[0]);
+	if (!path)
+	{
+		ft_simplerror(all->cmd->parsedpipe[0], all);
+		exit (127);
+	}
 	while (path[i])
 	{
 		if (!(dir = opendir(path[i])))
@@ -43,19 +53,23 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 		{
 			if (dp->d_namlen == len && ft_strcmp(dp->d_name, command->parsedpipe[0]) == 0) //if the command is found
 			{
-				if ((execve(ft_strjoin(path[i], newname), command->parsedpipe, NULL)) != 0) //executes the command
+				if ((execve(ft_strjoin(path[i], newname[1]), command->parsedpipe, NULL)) != 0) //executes the command
 				{
-						perror(command->parsedpipe[0]);
+						ft_error(command->parsedpipe[0], all);
+						exit(errno);
 				}
 			}
 		}
+		if (dir)
+			closedir(dir);
 		i++;
 	}
 	ft_putstr_fd(0, "sh: ", tmpout);
 	ft_putstr_fd(0, command->parsedpipe[0], tmpout);
 	ft_putstr_fd(1, ": command not found", tmpout);
-	free(path);
-	closedir(dir);
+	freestrpiped(path);
+	free(newname[2]);
+	free(newname[1]);
 	exit(127);
 }
 

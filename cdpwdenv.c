@@ -5,10 +5,8 @@ int	cd(t_all *all, char **arg)
 	char	*path;
 	char	*tmp;
 	char	pwd[1024];
-	char  	*dir[2];
 
-	dir[0] = getcwd(pwd, sizeof(pwd));
-	ft_setenv(all->envp, "OLDPWD", dir[0]);
+	ft_setenv(all->envp, "OLDPWD", getcwd(pwd, sizeof(pwd)));
 	if (arg[1] == NULL)
 	{
 		path = ft_getenv(all->envp, "HOME");
@@ -35,12 +33,7 @@ int	cd(t_all *all, char **arg)
 			free(tmp);
 		}
 	}
-	dir[1] = getcwd(pwd, sizeof(pwd));
-	ft_setenv(all->envp, "PWD", dir[1]);
-	/*if (dir[0])
-		free(dir[0]);
-	if (dir[1])
-		free(dir[1]);*/
+	ft_setenv(all->envp, "PWD", getcwd(pwd, sizeof(pwd)));
 	return (errno);
 }
 

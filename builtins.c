@@ -1,26 +1,22 @@
 #include "minishell.h"
 
-// echo +
-// cd +
-// pwd +
-// export +-
-// unset +
-// env +
-// exit +
-
 void	exit_(t_all *all, char **arg)
 {
 	if (!arg[1])
 		exit (0);
 	if (arg[2])
+	{
 		ft_putstr_fd(1, "sh: exit: too many arguments", 1);
+		all->return_val = 1;
+	}
 	else if (ft_isdigit(arg[1][0]))
-		exit (atoi(arg[1]));
+		exit (ft_atoi(arg[1]));
 	else
 	{
 		ft_putstr_fd(0, "sh: exit: ", 1);
 		ft_putstr_fd(0, arg[1], 1);
 		ft_putstr_fd(1, ": numeric argument required", 1);
+		all->return_val = 255;
 	}
 }
 
@@ -31,12 +27,13 @@ void	heredoc(t_all *all, char *arg)
 	while (1)
 	{
 		input = readline("> ");
-		if (ft_strcmp(input, arg) == 0)
-		{
-			free(input);
-			input = NULL;
-			return ;
-		}
+		if (input)
+			if (ft_strcmp(input, arg) == 0)
+			{
+				free(input);
+				input = NULL;
+				return ;
+			}
 	}
 }
 

@@ -29,7 +29,7 @@ int execdrop(t_all *all)
 		if ((execve(newname, all->cmd->parsed, NULL)) != 0) //executes the command
 		{
 			ft_error(newname, all);
-			exit(errno);
+			exit(127);
 		}
 	}
 	else if (pid < 0)

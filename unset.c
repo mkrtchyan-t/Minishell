@@ -16,6 +16,7 @@ static char	**delete_arg(char **envp, int i)
 		env[j] = ft_strdup(envp[i]);
 		j++;
 	}
+	env[j] = NULL;
 	return (env);
 }
 
