@@ -4,7 +4,7 @@ char	*get_cmdpipe(t_cmdfinal *com)
 {
 	int		i;
 	char	**command;
-	char 	*var;
+	char	*var;
 
 	command = ft_split(com->parsedpipe[0], '/');
 	i = 0;
@@ -76,12 +76,12 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 {
 	int		tmpin;
-	int 	pipefd[2];
+	int		pipefd[2];
 	int		tmpout;
-	int  	fdout;
-	int  	fdin;
+	int		fdout;
+	int		fdin;
 	pid_t	pid;
-	int  	status;
+	int		status;
 
 	tmpin = dup(0);
 	tmpout = dup(1);
@@ -90,6 +90,12 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		if (all->redir->typefilein == 1)
 		{
 			fdin = open(all->redir->filein, O_RDONLY);
+			if (command->parsedpipe == NULL)
+				command->parsedpipe = command->parsed;
+		}
+		else if (all->here && all->here->file)
+		{
+			fdin = open(all->here->file, O_RDONLY);
 			if (command->parsedpipe == NULL)
 				command->parsedpipe = command->parsed;
 		}
@@ -117,8 +123,23 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		else
 		{
 			pipe(pipefd);
-			fdout = pipefd[1];
-			fdin = pipefd[0];
+			if (all->redir && all->redir->fileout)
+			{
+				if (all->redir->typefileout == 1)
+					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_TRUNC, 0644);
+				else
+					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_APPEND, 0644);
+				close(pipefd[1]);
+			}
+			else
+				fdout = pipefd[1];
+			if (all->here && all->here->file)
+			{
+				fdin = open(all->here->file, O_RDONLY);
+				close(pipefd[0]);
+			}
+			else
+				fdin = pipefd[0];
 		}
 		dup2(fdout, 1);
 		close(fdout);
@@ -126,18 +147,26 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		if (pid == 0)
 		{
 			if ((builtin(all, command->parsedpipe)))
-				exit(0);
+				exit(all->return_val);
 			else
+			{
+				close(fdin);
+				close(fdout);
 				ft_execve(all, command, fdout, tmpout);
+			}
 		}
+
+		all->redir = all->redir->next;
 		command = command->next;
-	} 
+	}
 	dup2(tmpin, 0);
 	dup2(tmpout, 1);
 	close(tmpin);
 	close(tmpout);
 	g_glob.forked = 1;
-	waitpid(pid, &status, 0);
+	while (waitpid(-1, &status, 0)!=-1) {
+		;
+	}
 	g_glob.forked = 0;
 	all->return_val = WEXITSTATUS(status);
 }

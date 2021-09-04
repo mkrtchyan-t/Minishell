@@ -13,10 +13,10 @@ void	free_envp(char **envp)
 	free(envp);
 }
 
-void 	freecoms(t_all *all)
+void	freecoms(t_all *all)
 {
-	int 		i;
-	t_commands 	*tmp;
+	int			i;
+	t_commands	*tmp;
 
 	if (all->coms && all->coms->piped == 1)
 	{
@@ -43,7 +43,7 @@ void 	freecoms(t_all *all)
 	}
 }
 
-void 	freestrpiped(char **strpiped)
+void	freestrpiped(char **strpiped)
 {
 	int i;
 
@@ -53,20 +53,23 @@ void 	freestrpiped(char **strpiped)
 	free(strpiped);
 }
 
-void 	freecmds(t_all *all)
+void	freecmds(t_all *all)
 {
-	int 		i;
-	t_cmdfinal *tmp;
+	int			i;
+	t_cmdfinal	*tmp;
 
 	if (all->cmd && !all->cmd->parsed && all->cmd->parsedpipe)
 	{
 		while (all->cmd)
 		{
 			i = 0;
-			while (all->cmd->parsedpipe[i])
-				free(all->cmd->parsedpipe[i++]);
-			i = 0;
-			free(all->cmd->parsedpipe);
+			if (all->cmd->parsedpipe)
+			{	
+				while (all->cmd->parsedpipe[i])
+					free(all->cmd->parsedpipe[i++]);
+				i = 0;
+				free(all->cmd->parsedpipe);
+			}
 			tmp = all->cmd;
 			all->cmd = all->cmd->next;
 			free(tmp);
@@ -88,6 +91,7 @@ void 	freecmds(t_all *all)
 void freeredir(t_all *all)
 {
 	t_redirs *tmp;
+
 	while (all->redir)
 	{
 		free(all->redir->filein);
@@ -98,3 +102,16 @@ void freeredir(t_all *all)
 	}
 }
 
+void freeheredoc(t_all *all)
+{
+	t_heredoc *tmp;
+
+	while (all->here)
+	{
+		if (all->here->heredoc)
+			free(all->here->heredoc);
+		tmp = all->here;
+		all->here = all->here->next;
+		free(tmp);
+	}
+}

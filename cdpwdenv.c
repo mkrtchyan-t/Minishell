@@ -11,7 +11,10 @@ int	cd(t_all *all, char **arg)
 	{
 		path = ft_getenv(all->envp, "HOME");
 		if (chdir(path) != 0)
-			ft_putstr_fd(1, "sh: cd: HOME not set", 1);
+		{
+			all->return_val = 1;
+			ft_putstr_fd(1, "sh: cd: HOME not set", 2);
+		}
 		if (path)
 			free(path);
 	}
@@ -25,7 +28,12 @@ int	cd(t_all *all, char **arg)
 		else
 			path = arg[1];
 		if (chdir(path) != 0)
-			perror(path);
+		{
+			all->return_val = 1;
+			ft_putstr_fd(0, "sh: cd: ", 2);
+			ft_putstr_fd(0, path, 2);
+			ft_putstr_fd(1, ": no such file or directory", 2);
+		}
 		if (arg[1][0] == 126)
 		{
 			if (path)
@@ -34,7 +42,7 @@ int	cd(t_all *all, char **arg)
 		}
 	}
 	ft_setenv(all->envp, "PWD", getcwd(pwd, sizeof(pwd)));
-	return (errno);
+	return (1);
 }
 
 int	pwd(void)

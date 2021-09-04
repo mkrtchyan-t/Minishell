@@ -1,13 +1,13 @@
 #include "minishell.h"
 
-void 	initfinal(t_cmdfinal *cmds)
+void	initfinal(t_cmdfinal *cmds)
 {
 	cmds->parsed = NULL;
 	cmds->parsedpipe = NULL;
 	cmds->next = NULL;
 }
 
-void 	initredirs(t_redirs *redir)
+void	initredirs(t_redirs *redir)
 {
 	redir->redir = 0;
 	redir->filein = NULL;
@@ -17,11 +17,11 @@ void 	initredirs(t_redirs *redir)
 	redir->next = NULL;
 }
 
-char 	**copy_env(char **envp)
+char	**copy_env(char **envp)
 {
-	int 	len;
-	char 	**cpy;
-	int 	i;
+	int		len;
+	char	**cpy;
+	int		i;
 
 	len = 0;
 	while (envp[len])
@@ -46,7 +46,13 @@ void	initcmds(t_commands *coms)
 	coms->next = NULL;
 }
 
-void 	initenvp(t_all *all, char **envp)
+void	initheredoc(t_heredoc *here)
+{
+	here->heredoc = NULL;
+	here->next = NULL;
+}
+
+void	initenvp(t_all *all, char **envp)
 {
 	all->envp = copy_env(envp);
 }

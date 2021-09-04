@@ -1,17 +1,17 @@
 #include "minishell.h"
 
-int 	ft_isspace(char c)
+int	ft_isspace(char c)
 {
 	return (c == '\t' || c== '\n' || c== '\v' || c== '\f' \
 			|| c== '\r' || c == ' ');
 }
 
-void 	checkredirsout(t_redirs **redir, char *line)
+void	checkredirsout(t_redirs **redir, char *line)
 {
-	int 		i;
-	t_redirs 	*new;
-	int  		type;
-	char 		*tmp;
+	int			i;
+	t_redirs	*new;
+	int			type;
+	char		*tmp;
 
 	new = NULL;
 	i = 0;
@@ -21,6 +21,8 @@ void 	checkredirsout(t_redirs **redir, char *line)
 		if (((line[i] == '>' && line[i + 1] == '>') || \
 			(line[i] == '>' && line[i + 1] != '>')) && !inquotes(line, i))
 		{
+			if (type == 2 && line[i + 2] == '>')
+				return ;
 			new = (t_redirs *)malloc(sizeof(t_redirs));
 			initredirs(new);
 			new->redir = 1;
@@ -51,24 +53,40 @@ void 	checkredirsout(t_redirs **redir, char *line)
 			free(new);
 		}
 	}
+	else
+	{
+		new = (t_redirs *)malloc(sizeof(t_redirs));
+		initredirs(new);
+		addback(redir, new);
+	}
 }
 
-void 	checkredirsin(t_redirs **redir, char *line)
+void	checkredirsin(t_redirs **redir, char *line, t_all *all)
 {
-	int 		i;
-	t_redirs 	*new;
-	t_redirs  	*tmp;
-	int  		type;
-	char 		*tmp2;
+	int			i;
+	t_redirs	*new;
+	t_redirs	*tmp;
+	int			type;
+	char		*tmp2[2];
+	t_heredoc	*tm[3];
 
 	new = NULL;
 	i = 0;
+	tm[1] = NULL;
+	tm[0] = NULL;
 	while (line[i] != '\0')
-	{	
+	{
 		type = (line[i] == '<' && line[i + 1] == '<') ? 2: 0;
 		if (((line[i] == '<' && line[i + 1] == '<') || \
 			(line[i] == '<' && line[i + 1] != '<')) && !inquotes(line, i))
 		{
+			if (new)
+			{
+				free(new->filein);
+				free(new);
+			}
+			if (type == 2 && line[i + 2] == '<')
+				return ;
 			new = (t_redirs *)malloc(sizeof(t_redirs));
 			initredirs(new);
 			new->redir = 1;
@@ -78,17 +96,52 @@ void 	checkredirsin(t_redirs **redir, char *line)
 				i++;
 			while (ft_isspace(line[i]) && line[i])
 				i++;
+			if (new->typefilein == 2)
+			{
+				tm[0] = (t_heredoc *)malloc(sizeof(t_heredoc));
+				initheredoc(tm[0]);
+				tm[0]->heredoc = ft_strdup("");
+			}
 			while (!ft_isspace(line[i]) && line[i] != '<' && line[i] != '>' && line[i])
 			{
-				tmp2 = new->filein;
+				if (new->typefilein == 2)
+				{
+					tmp2[1] = tm[0]->heredoc;
+					tm[0]->heredoc = join(tm[0]->heredoc, line[i]);
+					free(tmp2[1]);
+				}
+				tmp2[0] = new->filein;
 				new->filein = join(new->filein, line[i]);
-				free(tmp2);
+				free(tmp2[0]);
 				i++;
+			}
+			if (new->typefilein == 2 && ft_strcmp(tm[0]->heredoc, "") != 0)
+			{
+				if (!all->here)
+				{
+					all->here = tm[0];
+					tm[1] = all->here;
+				}
+				else
+				{
+					tm[1] = all->here;
+					while (all->here->next)
+						all->here = all->here->next;
+					all->here->next = tm[0];
+					all->here = tm[1];
+				}
+			}
+			else if (new->typefilein == 2)
+			{
+				free(tm[0]->heredoc);
+				free(tm[0]);
 			}
 			i--;
 		}
 		i++;
 	}
+	if (tm[1])
+		all->here = tm[1];
 	if (*redir != NULL && new)
 	{
 		tmp = *redir;
@@ -108,9 +161,15 @@ void 	checkredirsin(t_redirs **redir, char *line)
 			free(new);
 		}
 	}
+	else if (!new && *redir == NULL)
+	{
+		new = (t_redirs *)malloc(sizeof(t_redirs));
+		initredirs(new);
+		addback(redir, new);
+	}
 }
 
-static 	int inquote(char *str)
+static int	inquote(char *str)
 {
 	int i;
 
@@ -126,7 +185,7 @@ static 	int inquote(char *str)
 
 int	checkmalloc(char **str, t_all *all)
 {
-	int 	i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -134,7 +193,7 @@ int	checkmalloc(char **str, t_all *all)
 	return (i);
 }
 
-static  int checksingle(char **str, t_all *all, int start, int i)
+static int	checksingle(char **str, t_all *all, int start, int i)
 {
 	if (str[i][start] && ((str[i][start] == '<' && str[i][start + 1] == '<') \
 		|| (str[i][start] == '>' && str[i][start + 1] == '>') ||
@@ -165,13 +224,13 @@ static  int checksingle(char **str, t_all *all, int start, int i)
 
 char	**checkcommand(t_all *all, char **str)
 {
-	int 	i;
-	char 	**cmd;
-	int 	j;
-	int  	done;
-	int  	start;
-	char  	*st;
-	int  	l;
+	int		i;
+	char	**cmd;
+	int		j;
+	int		done;
+	int		start;
+	char	*st;
+	int		l;
 
 	j = 0;
 	i = 0;
@@ -197,7 +256,6 @@ char	**checkcommand(t_all *all, char **str)
 				free(cmd[l]);
 				l++;
 			}
-			free(cmd);
 			free(st);
 			done = 0;
 			break ;
@@ -224,30 +282,37 @@ char	**checkcommand(t_all *all, char **str)
 			free(st);
 		}
 		else if (st)
-				free(st);
+			free(st);
 	}
 	if (done == 0)
+	{
+		free(cmd);
 		return (NULL);
+	}
 	cmd[j] = NULL;
 	return (cmd);
 }
 
-void 	checkredirs(char *line, t_all *all)
+void	checkredirs(char *line, t_all *all)
 {
-	int 	 	i;
-	t_cmdfinal 	*new;
-	char 		**str;
-	t_commands	*tmp;
+	int			i;
+	int			j;
+	t_cmdfinal	*new;
+	char		**str;
+	t_commands	*tmp1;
+	t_redirs 	*tmp2;
 
+	j = 0;
 	i = 0;
 	all->cmd = NULL;
 	i = 0;
 	str = ft_splitline(line, '|');
 	all->redir = NULL;
+	all->here = NULL;
 	while (str[i] != NULL)
-	{	
+	{
 		checkredirsout(&all->redir, str[i]);
-		checkredirsin(&all->redir, str[i]);
+		checkredirsin(&all->redir, str[i], all);
 		i++;
 	}
 	freestrpiped(str);
@@ -260,8 +325,9 @@ void 	checkredirs(char *line, t_all *all)
 		addbackcmd(&all->cmd, new);
 	}
 	else
-	{	
-		tmp = all->coms;
+	{
+		tmp1 = all->coms;
+		tmp2 = all->redir;
 		while (all->coms)
 		{
 			new = malloc(sizeof(t_cmdfinal));
@@ -269,8 +335,10 @@ void 	checkredirs(char *line, t_all *all)
 			new->parsedpipe = checkcommand(all, all->coms->parsedpipe);
 			addbackcmd(&all->cmd, new);
 			all->coms = all->coms->next;
+			all->redir = all->redir->next;
 			i++;
 		}
-		all->coms = tmp;
+		all->coms = tmp1;
+		all->redir = tmp2;
 	}
 }

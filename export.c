@@ -35,13 +35,13 @@ void	export_env(char **envp)
 	}
 }
 
-static 	int space(t_all *all, char **arg)
+static int	space(t_all *all, char **arg)
 {
 	int		i;
 	int		done;
 	int		var_size;
 	int		size;
-	int  	j;
+	int		j;
 
 	j = 1;
 	i = -1;
@@ -56,11 +56,11 @@ static 	int space(t_all *all, char **arg)
 
 int	check_arg(char *arg)
 {
-	if (!ft_isalpha(arg[0]))
+	if (!ft_isalpha(arg[0]) && arg[0] != '_')
 	{
-		ft_putstr_fd(0, "sh: export: \'", 1);
-		ft_putstr_fd(0, arg, 1);
-		ft_putstr_fd(1, "\': not a valid identifier", 1);
+		ft_putstr_fd(0, "sh: export: \'", 2);
+		ft_putstr_fd(0, arg, 2);
+		ft_putstr_fd(1, "\': not a valid identifier", 2);
 		return (1);
 	}
 	return (0);
@@ -92,7 +92,7 @@ char	**export_(t_all *all, char **arg)
 	{
 		if (check_arg(arg[j]))
 		{
-			env = envp;
+			all->return_val = 1;
 			continue ;
 		}
 		i = 0;
@@ -117,14 +117,12 @@ char	**export_(t_all *all, char **arg)
 			env[i] = NULL;
 		tmp = envp;
 		envp = copy_env(env);
+		i = 0;
+		while (env[i])
+			free(env[i++]);
+		i = 0;
 		freestrpiped(tmp);
-		if (j != size - 1)
-		{
-			i = 0;
-			while (env[i])
-				free(env[i++]);
-		}
 	}
-	freestrpiped(envp);
-	return (env);
+	free(env);
+	return (envp);
 }

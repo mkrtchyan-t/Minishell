@@ -28,31 +28,49 @@ char	**parsepipe(char *line)
 
 void	parsespace(char *firstpart, char ***parsed, t_all *all)
 {
-	int 	i;
-	char 	**str;
+	int		i;
+	char	**str;
 
 	i = 0;
 	str = ft_splitline(firstpart, ' ');
+	i = 0;
 	while (str[i] != NULL)
+	{
+		checkdolar(&str[i], all);
 		i++;
-	checkdolar(str, all);
+	}
 	*parsed = str;
 }
 
 int	processline(char *line, t_all *all)
 {
-	char 		**strpiped;
-	int 		i;
-	t_commands 	*new;
-	int  		piped;
+	char		**strpiped;
+	int			i;
+	t_commands	*new;
+	int			piped;
+	int			ret;
 
 	i = 0;
 	new = NULL;
+	all->here = NULL;
 	all->coms = NULL;
-	if (!checkquotes(line))
+	if ((ret = checkquotes(line)))
 	{
-		ft_putstr_fd(1, "unclosed quotes", 1);
-		return (0);
+		if (ret == 1)
+		{
+			ft_putstr_fd(1, "unclosed quotes", 1);
+			return (0);
+		}
+		else if (ret == 2)
+		{
+			ft_putstr_fd(1, "> ", 1);
+			return (0);
+		}
+		else if (ret == 3)
+		{
+			ft_putstr_fd(1, "sh: syntax error near unexpected token `|'", 2);
+			return (0);
+		}
 	}
 	piped = 0;
 	strpiped = NULL;
@@ -60,7 +78,7 @@ int	processline(char *line, t_all *all)
 	if (strpiped[1] != NULL)
 		piped = 1;
 	if (piped)
-	{	
+	{
 		i = 0;
 		while (strpiped[i])
 		{
@@ -95,7 +113,6 @@ int	processline(char *line, t_all *all)
 				printf("%s\n", all->cmd->parsedpipe[i]);
 	 			i++;
 	 		}
-	 		printf("%p", all->cmd);
 	 		all->cmd = all->cmd->next;
 	 		printf("\n");
 	 	}
@@ -114,16 +131,22 @@ int	processline(char *line, t_all *all)
 		 	printf("\n");
 		 }
 	 }*/
-	 //freecmds(all);
 	/* all->cmd = all->cmd->next;
 		where we use next for pipe, for example hello | hi, hello is parsedpipe[i] and then cmd->next
 		after cmd ->next parsedpipe[i] is hi;, we use next for every pipe
 	*/
 	//for redir - filetypes - 1 for < or >, 2 for << or >>
+	//printf("%p", all->redir);
+	/*while (all->here)
+	{
+		printf("%s\n", all->here->heredoc);
+		all->here = all->here->next;
+	}*/
 	/*while(all->redir)
 	{
-	 	printf("%d: fileintype: %d  fileouttype: %d  fileout:%s\n  filein:%s\n", all->redir->redir, all->redir->typefilein, \
-	 			all->redir->typefileout, all->redir->fileout, all->redir->filein);
+	 	printf("%d: fileintype: %d  fileouttype: %d redir: %d  fileout:%s\n  filein:%s\n", all->redir->redir, all->redir->typefilein, \
+	 			all->redir->typefileout, all->redir->redir,  all->redir->fileout, all->redir->filein);
+	 	printf("%p\n", all->redir);
 	 	all->redir = all->redir->next;
 	}*/
 	return (1);
@@ -146,10 +169,20 @@ static void	sig_handler(int sig)
 		rl_redisplay();
 		*(g_glob.ret) = 1;
 	}
-	else if (sig == SIGINT && g_glob.forked)
+	else if (sig == SIGINT && g_glob.forked && !g_glob.here)
 	{
 		write(1, "\n", 1);
 		*(g_glob.ret) = 130;
+	}
+	else if (sig == SIGINT && g_glob.forked && g_glob.here)
+	{
+		write(1, "\b\b  \b\b", 6);
+		write(1, "\n", 1);
+	}
+	else if (sig == SIGQUIT && g_glob.forked)
+	{
+		*(g_glob.ret) = 131;
+		printf("Quit: 3\n");
 	}
 }
 
@@ -157,7 +190,7 @@ int	main(int args, char **argv, char **envp)
 {
 	char		*line;
 	t_all		all;
-	int 		input;
+	int			input;
 
 	(void)argv;
 	if (args != 1)
@@ -169,10 +202,12 @@ int	main(int args, char **argv, char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	g_glob.ret = &(all.return_val);
 	initenvp(&all, envp);
+	g_glob.here = 0;
 	while (1)
 	{
 		g_glob.forked = 0;
 		signal(SIGINT, sig_handler);
+		signal(SIGQUIT, sig_handler);
 		input = takeinput(&line);
 		if (input == 1)
 			continue ;
@@ -195,5 +230,6 @@ int	main(int args, char **argv, char **envp)
 		free(line);
 		freecmds(&all);
 		freeredir(&all);
+		freeheredoc(&all);
 	}
 }

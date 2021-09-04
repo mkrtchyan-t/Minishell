@@ -4,7 +4,7 @@ void	ft_setenv(char **envp, char *value, char *key)
 {
 	int		i;
 	char	*line;
-	char  	*tmp;
+	char	*tmp;
 
 	i = 0;
 	value = ft_strjoin(value, "=");

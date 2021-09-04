@@ -2,7 +2,7 @@
 
 int	addback(t_redirs **a, t_redirs *new)
 {
-	t_redirs *lst;
+	t_redirs	*lst;
 
 	lst = last(*a);
 	if (lst)
@@ -14,7 +14,7 @@ int	addback(t_redirs **a, t_redirs *new)
 	return (1);
 }
 
-t_redirs *last(t_redirs *lst)
+t_redirs	*last(t_redirs *lst)
 {
 	while (lst)
 	{
@@ -44,7 +44,7 @@ int	cmd_size(t_cmdfinal *cmd)
 
 int	cmdline_size(char **cmd)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (cmd[i])
@@ -52,10 +52,10 @@ int	cmdline_size(char **cmd)
 	return (i);
 }
 
-char *join(char *f, char c)
+char	*join(char *f, char c)
 {
-	char 	*joined;
-	int 	i;
+	char	*joined;
+	int		i;
 
 	i = 0;
 	joined = (char *)malloc(sizeof(char) * (ft_strlen(f) + 2));

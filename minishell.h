@@ -19,7 +19,8 @@ typedef struct s_glob
 {
 	int forked;
 	int *ret;
-}				t_glob;
+	int here;
+}	t_glob;
 
 t_glob g_glob;
 
@@ -48,6 +49,15 @@ typedef struct s_cmdfinal
 	struct s_cmdfinal	*next;
 }	t_cmdfinal;
 
+
+typedef struct 	s_heredoc
+{
+	char 				*heredoc;
+	struct s_heredoc 	*next;
+	char 				*file;
+
+}				t_heredoc;
+
 typedef struct s_all
 {
 	t_commands	*coms;
@@ -55,6 +65,7 @@ typedef struct s_all
 	t_cmdfinal	*cmd;
 	char		**envp;
 	int			return_val;
+	t_heredoc 	*here;
 }	t_all;
 
 void		initcmds(t_commands *coms);
@@ -74,7 +85,7 @@ int			addbackcmd(t_cmdfinal **a, t_cmdfinal *neww);
 void		control_center(t_all *all);
 int			cmd_size(t_cmdfinal *cmd);
 int			cmdline_size(char **cmd);
-int			echo(t_all *all, char **arg);
+void		echo(t_all *all, char **arg);
 char		**unset(t_all *all, char **arg);
 int			env_size(char **env);
 int			cd(t_all *all, char **arg);
@@ -91,24 +102,28 @@ char		*get_cmd(t_all *all);
 int			all_space(char *line);
 void		child_sig_handler(int sig);
 void		child_sig_handler_bash(int sig);
-char 		*trimquotes(char *str);
+char		*trimquotes(char *str);
 int			insquotes(char const *str, int index);
 int			indquotes(char const *str, int index);
-int 		checkquotes(char *line);
-void 		checkdolar(char **str, t_all *all);
+int			checkquotes(char *line);
+void		checkdolar(char **str, t_all *all);
 char		**checkcommand(t_all *all, char **str);
-void		heredoc(t_all *all, char *arg);
+void		heredoc(t_all *all);
 int			inquotes(char const *str, int index);
-char 		*join(char *f, char c);
-void 		freecoms(t_all *all);
-void 		freestrpiped(char **strpiped);
-void 		freecmds(t_all *all);
-void 		ft_error(char *str, t_all *all);
-void 		ft_simplerror(char *str, t_all *all);
-char 		**copy_env(char **envp);
-void 		freeredir(t_all *all);
+char		*join(char *f, char c);
+void		ft_error(char *str, t_all *all);
+void		ft_simplerror(char *str, t_all *all);
+char		**copy_env(char **envp);
+void		initheredoc(t_heredoc *here);
+char		*replacequest(char *str, int start, int end, t_all *all);
+char		*replacestr(char *str, int start, int end, t_all *all);
 
 // free functions
 void		free_envp(char **envp);
+void		freeredir(t_all *all);
+void		freeheredoc(t_all *all);
+void		freecmds(t_all *all);
+void		freecoms(t_all *all);
+void		freestrpiped(char **strpiped);
 
 #endif

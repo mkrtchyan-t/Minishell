@@ -1,33 +1,34 @@
-NAME = minishell
+NAME	=	minishell
 
-SRCS =	init.c \
-		minishell.c \
-		quotes.c \
-		execve.c \
-		builtins.c \
-		messages.c \
-		checkredirects.c \
-		utils.c \
-		utils2.c \
-		echo.c \
-		unset.c \
-		cdpwdenv.c \
-		export.c \
-		free.c \
-		utils3.c \
-		pipe.c \
-		ft_splitline.c \
-		error.c \
+SRCS	=	init.c \
+			minishell.c \
+			quotes.c \
+			execve.c \
+			builtins.c \
+			messages.c \
+			checkredirects.c \
+			utils.c \
+			utils2.c \
+			echo.c \
+			unset.c \
+			cdpwdenv.c \
+			export.c \
+			free.c \
+			utils3.c \
+			pipe.c \
+			ft_splitline.c \
+			error.c \
+			heredoc.c
 
 LIBFT		= ./libft/libft.a
 
-OBJS = ${SRCS:.c=.o}
+OBJS		= ${SRCS:.c=.o}
 
-RM	= rm -rf
-FLAGS = -Wall -Wextra -Werror
+RM			= rm -rf
+FLAGS		= -Wall -Wextra -Werror
 
-LDFLAGS = -L/Users/$$(whoami)/.brew/opt/readline/lib
-CPPFLAGS = -I/Users/$$(whoami)/.brew/opt/readline/include
+LDFLAGS		= -L/Users/$$(whoami)/.brew/opt/readline/lib
+CPPFLAGS	= -I/Users/$$(whoami)/.brew/opt/readline/include
 
 GREEN		= \033[0;32m
 RED			= \033[0;31m
@@ -36,26 +37,26 @@ RESET		= \033[0;0m
 all: ${LIBFT} ${NAME}
 
 ${LIBFT}:
-		@make -C ./libft --silent
-		@echo "$(GREEN) libft.a	created! $(RESET)"
+			@make -C ./libft --silent
+			@echo "$(GREEN) libft.a	created! $(RESET)"
 
 ${NAME}: $(OBJS)
-		@gcc $(CPPFLAGS) $(LDFLAGS) $(LIBFT) -lreadline $(FLAGS) -o $@ ${OBJS}
-		@echo "$(GREEN) $(NAME)	created! $(RESET)"
-		@echo "$(GREEN) objects	created! $(RESET)"
+			@gcc $(CPPFLAGS) $(LDFLAGS) $(LIBFT) -lreadline $(FLAGS) -o $@ ${OBJS}
+			@echo "$(GREEN) $(NAME)	created! $(RESET)"
+			@echo "$(GREEN) objects	created! $(RESET)"
 
 clean:
-	@make -C ./libft clean --silent
-	@$(RM) $(OBJS) --silent
-	@echo "$(RED) libft.a	deleted! $(RESET)"
-	@echo "$(RED) objectcs	deleted! $(RESET)"
+			@make -C ./libft clean --silent
+			@$(RM) $(OBJS) --silent
+			@echo "$(RED) libft.a	deleted! $(RESET)"
+			@echo "$(RED) objectcs	deleted! $(RESET)"
 
 
 fclean: clean
-	@$(RM) $(NAME) --silent
-	@$(RM) $(LIBFT) --silent
-	@echo "$(RED) $(NAME)	deleted! $(RESET)"
+			@$(RM) $(NAME) --silent
+			@$(RM) $(LIBFT) --silent
+			@echo "$(RED) $(NAME)	deleted! $(RESET)"
 
-re:	fclean all
+re: fclean all
 
 .PHONY: all clean fclean re

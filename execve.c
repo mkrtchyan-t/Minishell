@@ -4,7 +4,7 @@ char	*get_cmd(t_all *all)
 {
 	int		i;
 	char	**command;
-	char 	*var;
+	char	*var;
 
 	command = ft_split(all->cmd->parsed[0], '/');
 	i = 0;
@@ -15,7 +15,7 @@ char	*get_cmd(t_all *all)
 	return (var);
 }
 
-int execdrop(t_all *all)
+int	execdrop(t_all *all)
 {
 	int		pid;
 	char	*newname;
@@ -55,7 +55,8 @@ int	execution(t_all *all)
 
 	i = 0;
 	res[0] = 0;
-	if(all->cmd->parsed[0][0] == '/')
+	if(all->cmd->parsed[0][0] == '/' || (all->cmd->parsed[0][0] == '.' && \
+	all->cmd->parsed[0][1] && all->cmd->parsed[0][1] == '/'))
 	{
 		execdrop(all);
 		return (1);
@@ -121,18 +122,17 @@ int	execution(t_all *all)
 
 void	control_center(t_all *all)
 {
-	if (all->redir && all->redir->filein && all->redir->typefilein == 2)
+	if (all->here)
 	{
-		heredoc(all, all->redir->filein);
+		heredoc(all);
 	}
-	if ((all->cmd->parsed && !all->redir) || (all->cmd->parsed && \
-		all->redir && all->redir->filein && \
-		all->redir->typefilein == 2 && !all->redir->fileout))
+	if (all->cmd && all->cmd->parsed && (!all->redir->fileout && !all->redir->filein))
 	{
 		if (!builtin(all, all->cmd->parsed))
 			execution(all);
 	}
-	else if (all->cmd->parsedpipe || all->redir)
+	else if ((all->cmd && all->cmd->parsedpipe) || (all->redir->fileout || \
+			(all->redir->filein && all->redir->typefilein != 2) || (all->here && all->here->file)))
 		pipe_commands(all, all->cmd, 1);
 	return ;
 }

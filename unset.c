@@ -33,6 +33,18 @@ void	print_env2(char **env)
 	}
 }
 
+int	checkarg(char *arg)
+{
+	if ((!ft_isalpha(arg[0]) && arg[0] != '_') || ft_strchr(arg, '=') != NULL)
+	{
+		ft_putstr_fd(0, "sh: export: \'", 2);
+		ft_putstr_fd(0, arg, 2);
+		ft_putstr_fd(1, "\': not a valid identifier", 2);
+		return (1);
+	}
+	return (0);
+}
+
 char	**unset(t_all *all, char **arg)
 {
 	int		i;
@@ -45,6 +57,11 @@ char	**unset(t_all *all, char **arg)
 	env = all->envp;
 	while (arg[++j])
 	{
+		if (checkarg(arg[j]))
+		{
+			all->return_val = 1;
+			continue ;
+		}
 		i = 0;
 		while (env[i])
 		{

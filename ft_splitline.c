@@ -71,7 +71,7 @@ int	inquotes(char const *str, int index)
 		{
 			start = i;
 			i++;
-			while (str[i] != '\"' && str[i] != '\'')
+			while (str[i] != str[start])
 				i++;
 			last = i;
 			break ;
