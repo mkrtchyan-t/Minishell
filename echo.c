@@ -1,5 +1,24 @@
 #include "minishell.h"
 
+int  		option(char *str)
+{
+	int i;
+
+	i = 0;
+	if (str[i] && str[i] == '-')
+	{
+		i++;
+		while (str[i])
+		{
+			if (str[i] != 'n')
+				return (0);
+			i++;
+		}
+		return (1);
+	}
+	return (0);
+}
+
 static void	echo_helper(t_all *all, char **arg)
 {
 	int		i;
@@ -12,7 +31,7 @@ static void	echo_helper(t_all *all, char **arg)
 		return ;
 	}
 	size = cmdline_size(arg);
-	while (arg[i] && ft_strcmp(arg[i], "-n") == 0)
+	while (arg[i] && (option(arg[i]) == 1))
 		i++;
 	while(i < size)
 	{
@@ -31,6 +50,6 @@ void	echo(t_all *all, char **arg)
 	tmp = all;
 	echo_helper(all, arg);
 	if (arg[1])
-		if (ft_strcmp(arg[1], "-n") != 0)
+		if (option(arg[1]) == 0)
 			write(fd, "\n", 1);
 }

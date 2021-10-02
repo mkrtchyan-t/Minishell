@@ -25,11 +25,12 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 	char	*newname[3];
 
 	i = 0;
-	if(command->parsedpipe[0][0] == '/')
+	if(command->parsedpipe[0][0] == '/' || (command->parsedpipe[0][0] == '.' && \
+	command->parsedpipe[0][1] && command->parsedpipe[0][1] == '/'))
 	{
 		newname[0] = command->parsedpipe[0];
 		command->parsedpipe[0] = get_cmdpipe(command);
-		if ((execve(newname[0], command->parsedpipe, NULL)) != 0) //executes the command
+		if ((execve(newname[0], command->parsedpipe, all->envp)) != 0)
 		{
 			ft_error(newname[0], all);
 			free(newname[0]);
@@ -51,9 +52,9 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 		len = ft_strlen(command->parsedpipe[0]);
 		while ((dp = readdir(dir)) != NULL)
 		{
-			if (dp->d_namlen == len && ft_strcmp(dp->d_name, command->parsedpipe[0]) == 0) //if the command is found
+			if (dp->d_namlen == len && ft_strcmp(dp->d_name, command->parsedpipe[0]) == 0)
 			{
-				if ((execve(ft_strjoin(path[i], newname[1]), command->parsedpipe, NULL)) != 0) //executes the command
+				if ((execve(ft_strjoin(path[i], newname[1]), command->parsedpipe, NULL)) != 0)
 				{
 						ft_error(command->parsedpipe[0], all);
 						exit(errno);
@@ -73,6 +74,15 @@ int	ft_execve(t_all *all, t_cmdfinal *command, int fdout, int tmpout)
 	exit(127);
 }
 
+static void sighan(int sig)
+{
+	if (sig == SIGINT && !g_glob.here)
+	{
+		write(1, "\n", 1);
+		*(g_glob.ret) = 130;
+	}
+}
+
 void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 {
 	int		tmpin;
@@ -85,11 +95,18 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 
 	tmpin = dup(0);
 	tmpout = dup(1);
+	signal(SIGINT, SIG_IGN);
 	if (all->redir && all->redir->filein)
 	{
 		if (all->redir->typefilein == 1)
 		{
 			fdin = open(all->redir->filein, O_RDONLY);
+			if (fdin < 0)
+			{
+				ft_putstr_fd(0, "sh: ", 1);
+				ft_putstr_fd(1, strerror(errno), 1);
+				return ;
+			}
 			if (command->parsedpipe == NULL)
 				command->parsedpipe = command->parsed;
 		}
@@ -114,6 +131,12 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_TRUNC, 0644);
 				else
 					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_APPEND, 0644);
+				if (fdout < 0)
+				{
+					ft_putstr_fd(0, "sh: ", 1);
+					ft_putstr_fd(1, strerror(errno), 1);
+					return ;
+				}
 				if (command->parsedpipe == NULL)
 					command->parsedpipe = command->parsed;
 			}
@@ -129,6 +152,12 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_TRUNC, 0644);
 				else
 					fdout = open(all->redir->fileout, O_WRONLY | O_CREAT | O_RDONLY | O_APPEND, 0644);
+				if (fdout < 0)
+				{
+					ft_putstr_fd(0, "sh: ", 1);
+					ft_putstr_fd(1, strerror(errno), 1);
+					return ;
+				}
 				close(pipefd[1]);
 			}
 			else
@@ -136,6 +165,12 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 			if (all->here && all->here->file)
 			{
 				fdin = open(all->here->file, O_RDONLY);
+				if (fdin < 0)
+				{
+					ft_putstr_fd(0, "sh: ", 1);
+					ft_putstr_fd(1, strerror(errno), 1);
+					return ;
+				}
 				close(pipefd[0]);
 			}
 			else
@@ -146,6 +181,7 @@ void	pipe_commands(t_all *all, t_cmdfinal *command, int p_count)
 		pid = fork();
 		if (pid == 0)
 		{
+			signal(SIGINT, sighan);
 			if ((builtin(all, command->parsedpipe)))
 				exit(all->return_val);
 			else

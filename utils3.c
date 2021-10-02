@@ -1,26 +1,36 @@
 #include "minishell.h"
 
-void	ft_setenv(char **envp, char *value, char *key)
+void	ft_setenv(char **envp, char *key, char *value)
 {
 	int		i;
 	char	*line;
 	char	*tmp;
 
 	i = 0;
-	value = ft_strjoin(value, "=");
+	key = ft_strjoin(key, "=");
 	while (envp[i])
 	{
-		if (ft_strncmp(envp[i], value, ft_strlen(value)) == 0)
+		if (ft_strncmp(envp[i], key, ft_strlen(key)) == 0)
 		{
-			line = ft_strjoin(value, key);
+			line = ft_strjoin(key, value);
 			tmp = envp[i];
 			envp[i] = ft_strdup(line);
 			free(tmp);
 			free(line);
+			break ;
 		}
 		i++;
 	}
-	free(value);
+	if (!envp[i])
+	{
+		line = ft_strjoin(key, value);
+		tmp = envp[i];
+		envp[i] = ft_strdup(line);
+		envp[++i] = NULL;
+		free(tmp);
+		free(line);
+	}
+	free(key);
 }
 
 char	*ft_getenv(char **envp ,char *var)

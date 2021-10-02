@@ -23,11 +23,16 @@ void	export_env(char **envp)
 		splitted = ft_split(envp[i], '=');
 		ft_putstr_fd(0, "declare -x ", 1);
 		ft_putstr_fd(0, splitted[0], 1);
-		if (splitted[1])
+		if (has_value(envp[i]))
 		{
-			ft_putstr_fd(0, "=\"", 1);
-			ft_putstr_fd(0, splitted[1], 1);
-			ft_putstr_fd(0, "\"", 1);
+			if (splitted[1])
+			{
+				ft_putstr_fd(0, "=\"", 1);
+				ft_putstr_fd(0, splitted[1], 1);
+				ft_putstr_fd(0, "\"", 1);
+			}
+			else
+				ft_putstr_fd(0, "=\"\"", 1);
 		}
 		write(1, "\n", 1);
 		freestrpiped(splitted);
@@ -83,13 +88,11 @@ char	**export_(t_all *all, char **arg)
 	}
 	envp = all->envp;
 	j = 0;
-	while (arg[j])
-		j++;
-	size = j;
-	j = 0;
 	env = (char **)malloc(sizeof(char *) * (space(all, arg) + 1));
 	while (arg[++j])
 	{
+		size = (has_value(arg[j])) ? (ft_strclen(arg[j], '='))
+				: (ft_strlen(arg[j]));
 		if (check_arg(arg[j]))
 		{
 			all->return_val = 1;
@@ -99,7 +102,13 @@ char	**export_(t_all *all, char **arg)
 		done = 0;
 		while (i < env_size(envp))
 		{
-			if (ft_strncmp(envp[i], arg[j], (ft_strclen(arg[j], '=') + 1)) != 0)
+			if ((has_value(envp[i]) && ft_strncmp(envp[i], arg[j], ft_strclen(envp[i], '=')) == 0))
+			{
+				env[i] = (has_value(arg[j])) ? (ft_strdup(arg[j]))
+						: (ft_strdup(envp[i]));
+				done = 1;
+			}
+			else if (ft_strcmp(envp[i], arg[j]) != 0)
 				env[i] = ft_strdup(envp[i]);
 			else
 			{

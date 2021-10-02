@@ -58,12 +58,12 @@ int	processline(char *line, t_all *all)
 	{
 		if (ret == 1)
 		{
-			ft_putstr_fd(1, "unclosed quotes", 1);
+			ft_putstr_fd(1, "sh: unclosed quotes", 1);
 			return (0);
 		}
 		else if (ret == 2)
 		{
-			ft_putstr_fd(1, "> ", 1);
+			ft_putstr_fd(1, "sh: invalid character \"\\\"", 1);
 			return (0);
 		}
 		else if (ret == 3)
@@ -154,32 +154,18 @@ int	processline(char *line, t_all *all)
 
 static void	sig_handler(int sig)
 {
-	if (sig == SIGINT && !g_glob.forked)
-	{
-		write(1, "\r", 1);
-		rl_on_new_line();
-		rl_redisplay();
-		ft_putstr_fd(0, "  \b\b", 1);
-	}
+	struct termios info;
+	tcgetattr(0, &info);
+	info.c_lflag &= ~ECHOCTL;
+	tcsetattr(0, TCSANOW, &info);
 	if (sig == SIGINT && !g_glob.forked)
 	{
 		rl_replace_line("", 0);
 		write(1, "\n", 1);
 		rl_on_new_line();
 		rl_redisplay();
-		*(g_glob.ret) = 1;
 	}
-	else if (sig == SIGINT && g_glob.forked && !g_glob.here)
-	{
-		write(1, "\n", 1);
-		*(g_glob.ret) = 130;
-	}
-	else if (sig == SIGINT && g_glob.forked && g_glob.here)
-	{
-		write(1, "\b\b  \b\b", 6);
-		write(1, "\n", 1);
-	}
-	else if (sig == SIGQUIT && g_glob.forked)
+	else if (sig == SIGQUIT && g_glob.forked && !g_glob.here)
 	{
 		*(g_glob.ret) = 131;
 		printf("Quit: 3\n");
@@ -203,6 +189,7 @@ int	main(int args, char **argv, char **envp)
 	g_glob.ret = &(all.return_val);
 	initenvp(&all, envp);
 	g_glob.here = 0;
+	welcome_msg();
 	while (1)
 	{
 		g_glob.forked = 0;
@@ -212,7 +199,10 @@ int	main(int args, char **argv, char **envp)
 		if (input == 1)
 			continue ;
 		else if (input == 2)
+		{
+			goodbye_msg();
 			break ;
+		}
 		if (!all_space(line))
 		{
 			if (!processline(line, &all))

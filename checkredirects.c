@@ -21,6 +21,11 @@ void	checkredirsout(t_redirs **redir, char *line)
 		if (((line[i] == '>' && line[i + 1] == '>') || \
 			(line[i] == '>' && line[i + 1] != '>')) && !inquotes(line, i))
 		{
+			if (new)
+			{
+				free(new->fileout);
+				free(new);
+			}
 			if (type == 2 && line[i + 2] == '>')
 				return ;
 			new = (t_redirs *)malloc(sizeof(t_redirs));
@@ -195,9 +200,9 @@ int	checkmalloc(char **str, t_all *all)
 
 static int	checksingle(char **str, t_all *all, int start, int i)
 {
-	if (str[i][start] && ((str[i][start] == '<' && str[i][start + 1] == '<') \
-		|| (str[i][start] == '>' && str[i][start + 1] == '>') ||
-		(str[i][start] == '<' && str[i][start + 1] != '<') \
+	if (str[i][start] && ((str[i][start] == '<' && str[i][start + 1] == '<')
+		|| (str[i][start] == '>' && str[i][start + 1] == '>')
+		|| (str[i][start] == '<' && str[i][start + 1] != '<')
 		|| (str[i][start] == '>' && str[i][start + 1] != '>')) && !inquotes(str[i], start))
 	{
 		if (str[i][start] == '>')
@@ -206,12 +211,13 @@ static int	checksingle(char **str, t_all *all, int start, int i)
 			{
 				ft_putstr_fd(1, "sh: syntax error near unexpected token `newline'", 1);
 				all->return_val = 258;
-				return (0) ;
+				return (0);
 			}
 		}
 		else if (str[i][start] == '<')
 		{
-			if (!all->redir || (all->redir && !all->redir->filein))
+			if (!all->redir || (all->redir && !all->redir->filein)
+				|| ((str[i][start + 1] == '<') && (!all->here || (all->here && !all->here->heredoc))))
 			{
 				ft_putstr_fd(1, "sh: syntax error near unexpected token `newline'", 1);
 				all->return_val = 258;
@@ -257,6 +263,8 @@ char	**checkcommand(t_all *all, char **str)
 				l++;
 			}
 			free(st);
+			free(cmd);
+			cmd = NULL;
 			done = 0;
 			break ;
 		}
@@ -286,7 +294,8 @@ char	**checkcommand(t_all *all, char **str)
 	}
 	if (done == 0)
 	{
-		free(cmd);
+		if (cmd)
+			free(cmd);
 		return (NULL);
 	}
 	cmd[j] = NULL;
@@ -300,7 +309,7 @@ void	checkredirs(char *line, t_all *all)
 	t_cmdfinal	*new;
 	char		**str;
 	t_commands	*tmp1;
-	t_redirs 	*tmp2;
+	t_redirs	*tmp2;
 
 	j = 0;
 	i = 0;

@@ -3,10 +3,11 @@
 int	cd(t_all *all, char **arg)
 {
 	char	*path;
+	char	*oldpwd;
 	char	*tmp;
 	char	pwd[1024];
 
-	ft_setenv(all->envp, "OLDPWD", getcwd(pwd, sizeof(pwd)));
+	oldpwd = getcwd(pwd, sizeof(pwd));
 	if (arg[1] == NULL)
 	{
 		path = ft_getenv(all->envp, "HOME");
@@ -17,6 +18,22 @@ int	cd(t_all *all, char **arg)
 		}
 		if (path)
 			free(path);
+	}
+	else if (ft_strcmp(arg[1], "-") == 0)
+	{
+		if ((tmp = ft_getenv(all->envp, "OLDPWD")) == NULL)
+		{
+			all->return_val = 1;
+			ft_putstr_fd(1, "sh: cd: OLDPWD not set", 2);
+			return (all->return_val);
+		}
+		if (chdir(tmp) != 0)
+		{
+			all->return_val = 1;
+			perror(arg[1]);
+		}
+		ft_putstr_fd(1, tmp, 1);
+		free(tmp);
 	}
 	else
 	{
@@ -30,9 +47,7 @@ int	cd(t_all *all, char **arg)
 		if (chdir(path) != 0)
 		{
 			all->return_val = 1;
-			ft_putstr_fd(0, "sh: cd: ", 2);
-			ft_putstr_fd(0, path, 2);
-			ft_putstr_fd(1, ": no such file or directory", 2);
+			perror(arg[1]);
 		}
 		if (arg[1][0] == 126)
 		{
@@ -41,6 +56,7 @@ int	cd(t_all *all, char **arg)
 			free(tmp);
 		}
 	}
+	ft_setenv(all->envp, "OLDPWD", oldpwd);
 	ft_setenv(all->envp, "PWD", getcwd(pwd, sizeof(pwd)));
 	return (1);
 }

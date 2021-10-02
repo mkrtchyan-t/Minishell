@@ -15,6 +15,8 @@ static int	isnum(char *s)
 			break ;
 		}
 	}
+	if (i == 0)
+		return (0);
 	return (l);
 }
 
@@ -26,23 +28,26 @@ void	exit_(t_all *all, char **arg)
 	l = 1;
 	i = 0;
 	if (!arg[1])
+	{
+		goodbye_msg();
 		exit (0);
-	if (arg[2])
+	}
+	if (!((arg[1][0] == '-' && isnum(&arg[1][1])) || (isnum(&arg[1][0]))))
+	{
+		ft_putstr_fd(0, "sh: exit: ", 1);
+		ft_putstr_fd(0, arg[1], 1);
+		ft_putstr_fd(1, ": numeric argument required", 2);
+		exit(255);
+	}
+	else if (arg[2])
 	{
 		ft_putstr_fd(1, "sh: exit: too many arguments", 2);
 		all->return_val = 1;
 	}
 	else if (isnum(arg[1]))
-		exit (ft_atoi(arg[1]));
+		exit(ft_atoi(arg[1]));
 	else if (arg[1][0] == '-' && isnum(&arg[1][1]))
-		exit (256 - ft_atoi(&arg[1][1]));
-	else
-	{
-		ft_putstr_fd(0, "sh: exit: ", 1);
-		ft_putstr_fd(0, arg[1], 1);
-		ft_putstr_fd(1, ": numeric argument required", 2);
-		all->return_val = 255;
-	}
+		exit (256 - ft_atoi(&arg[1][1]) % 256);
 }
 
 int	builtin(t_all *all, char **arg)

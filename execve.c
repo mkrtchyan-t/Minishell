@@ -26,7 +26,7 @@ int	execdrop(t_all *all)
 	pid = fork();
 	if (pid == 0)
 	{
-		if ((execve(newname, all->cmd->parsed, NULL)) != 0) //executes the command
+		if ((execve(newname, all->cmd->parsed, all->envp)) != 0) //executes the command
 		{
 			ft_error(newname, all);
 			exit(127);
@@ -126,13 +126,13 @@ void	control_center(t_all *all)
 	{
 		heredoc(all);
 	}
-	if (all->cmd && all->cmd->parsed && (!all->redir->fileout && !all->redir->filein))
+	if (all->cmd && all->cmd->parsed && (!all->redir || (all->redir && !all->redir->fileout && !all->redir->filein)))
 	{
 		if (!builtin(all, all->cmd->parsed))
 			execution(all);
 	}
-	else if ((all->cmd && all->cmd->parsedpipe) || (all->redir->fileout || \
-			(all->redir->filein && all->redir->typefilein != 2) || (all->here && all->here->file)))
+	else if ((all->cmd && all->cmd->parsedpipe) || ((all->redir && all->redir->fileout) || \
+			(all->redir && all->redir->filein && all->redir->typefilein != 2) || (all->here && all->here->file)))
 		pipe_commands(all, all->cmd, 1);
 	return ;
 }

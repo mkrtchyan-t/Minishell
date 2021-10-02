@@ -1,32 +1,25 @@
 #include "minishell.h"
 
-// void	goodbye_msg()
-// {
-// 	char	*line;
-// 	int		fd;
-
-// 	line = NULL;
-// 	fd = open("goodbye.txt", 'r');
-// 	while (get_next_line(fd, &line))
-// 		ft_putstr_fd(1, line, 1);
-// }
-
-void	goodbye_msg()
+void	goodbye_msg(void)
 {
-	ft_putstr_fd(1, "\n", 1);
-	ft_putstr_fd(1, " ██████╗ ██╗   ██╗███████╗", 1);
-	ft_putstr_fd(1, " ██╔══██╗╚██╗ ██╔╝██╔════╝", 1);
-	ft_putstr_fd(1, " ██████╔╝ ╚████╔╝ █████╗  ", 1);
-	ft_putstr_fd(1, " ██╔══██╗  ╚██╔╝  ██╔══╝  ", 1);
-	ft_putstr_fd(1, " ██████╔╝   ██║   ███████╗", 1);
-	ft_putstr_fd(1, " ╚═════╝    ╚═╝   ╚══════╝", 1);
-	ft_putstr_fd(1, "\n", 1);
+	ft_putstr_fd(1, "\n\033[0;31m", 1);
+	ft_putstr_fd(1, "  ▄▄▄▄ ▓██   ██▓▓█████ ", 1);
+	ft_putstr_fd(1, "▓█████▄▒██  ██▒▓█   ▀ ", 1);
+	ft_putstr_fd(1, "▒██▒ ▄██▒██ ██░▒███   ", 1);
+	ft_putstr_fd(1, "▒██░█▀  ░ ▐██▓░▒▓█  ▄ ", 1);
+	ft_putstr_fd(1, "░▓█  ▀█▓░ ██▒▓░░▒████▒", 1);
+	ft_putstr_fd(1, "░▒▓███▀▒ ██▒▒▒ ░░ ▒░ ░", 1);
+	ft_putstr_fd(1, "▒░▒   ░▓██ ░▒░  ░ ░  ░", 1);
+	ft_putstr_fd(1, " ░    ░▒ ▒ ░░     ░   ", 1);
+	ft_putstr_fd(1, " ░     ░ ░        ░  ░", 1);
+	ft_putstr_fd(1, "      ░░ ░            ", 1);
+	ft_putstr_fd(1, "\033[0;0m\n", 1);
 }
 
-void	welcome_msg()
+void	welcome_msg(void)
 {
-	ft_putstr_fd(1, "\n", 1);
-	ft_putstr_fd(1, "\033[0;31m ███▄ ▄███▓ ██▓ ███▄    █  ██▓  ██████  ██░ ██ ▓█████  ██▓     ██▓    ", 1);
+	ft_putstr_fd(1, "\n\033[0;31m", 1);
+	ft_putstr_fd(1, "███▄ ▄███▓ ██▓ ███▄     █  ██▓  ██████  ██░ ██ ▓█████  ██▓    ██▓    ", 1);
 	ft_putstr_fd(1, "▓██▒▀█▀ ██▒▓██▒ ██ ▀█   █ ▓██▒▒██    ▒ ▓██░ ██▒▓█   ▀ ▓██▒    ▓██▒    ", 1);
 	ft_putstr_fd(1, "▓██    ▓██░▒██▒▓██  ▀█ ██▒▒██▒░ ▓██▄   ▒██▀▀██░▒███   ▒██░    ▒██░    ", 1);
 	ft_putstr_fd(1, "▒██    ▒██ ░██░▓██▒  ▐▌██▒░██░  ▒   ██▒░▓█ ░██ ▒▓█  ▄ ▒██░    ▒██░    ", 1);
@@ -34,6 +27,6 @@ void	welcome_msg()
 	ft_putstr_fd(1, "░ ▒░   ░  ░░▓  ░ ▒░   ▒ ▒ ░▓  ▒ ▒▓▒ ▒ ░ ▒ ░░▒░▒░░ ▒░ ░░ ▒░▓  ░░ ▒░▓  ░", 1);
 	ft_putstr_fd(1, "░  ░      ░ ▒ ░░ ░░   ░ ▒░ ▒ ░░ ░▒  ░ ░ ▒ ░▒░ ░ ░ ░  ░░ ░ ▒  ░░ ░ ▒  ░", 1);
 	ft_putstr_fd(1, "░      ░    ▒ ░   ░   ░ ░  ▒ ░░  ░  ░   ░  ░░ ░   ░     ░ ░     ░ ░   ", 1);
-	ft_putstr_fd(1, "       ░    ░           ░  ░        ░   ░  ░  ░   ░  ░    ░  ░    ░  ░\033[0;0m", 1);
-	ft_putstr_fd(1, "\n", 1);
+	ft_putstr_fd(1, "       ░    ░           ░  ░        ░   ░  ░  ░   ░  ░    ░  ░    ░  ░", 1);
+	ft_putstr_fd(1, "\033[0;0m\n", 1);
 }

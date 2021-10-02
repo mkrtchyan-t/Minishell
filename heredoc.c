@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-void 	han(int sig)
+void	han(int sig)
 {
 	if (sig == SIGINT)
 	{
-		write(1, "\b\b  \b\b", 6);
+		write(1, "\n", 1);
 		exit (1);
 	}
 }
@@ -14,9 +14,9 @@ void	heredoc(t_all *all)
 	char	*input;
 	char	c;
 	int		fd[2];
-	pid_t  	pid;
-	int 	fdes;
-	int 	status;
+	pid_t	pid;
+	int		fdes;
+	int		status;
 	t_heredoc *tmp;
 
 	tmp = all->here;
